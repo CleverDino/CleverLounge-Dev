@@ -1,21 +1,22 @@
 <script lang="ts">
-import {defineComponent, PropType, h} from "vue";
+import {defineComponent, PropType} from "vue";
 import parse from "../js/helpers/parse";
-import type {ClientMessage, ClientNetwork} from "../js/types";
+import type {ClientMessage, ClientNetwork, ClientChan} from "../js/types";
 
 export default defineComponent({
 	name: "ParsedMessage",
-	functional: true,
 	props: {
 		text: String,
 		message: {type: Object as PropType<ClientMessage | string>, required: false},
 		network: {type: Object as PropType<ClientNetwork>, required: false},
+		channel: {type: Object as PropType<ClientChan>, required: false},
 	},
-	render(context) {
+	render() {
 		return parse(
-			typeof context.text !== "undefined" ? context.text : context.message.text,
-			context.message,
-			context.network
+			typeof this.text !== "undefined" ? this.text : this.message.text,
+			this.message,
+			this.network,
+			this.channel
 		);
 	},
 });
