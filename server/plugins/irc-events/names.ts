@@ -24,5 +24,8 @@ export default <IrcEventHandler>function (irc, network) {
 		client.emit("users", {
 			chan: chan.id,
 		});
+
+		// Trigger WHO to get hostmasks for all users
+		network.irc.raw("WHO", data.channel);
 	});
 };
