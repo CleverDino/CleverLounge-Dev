@@ -8,6 +8,7 @@ class User {
 	away!: string;
 	nick!: string;
 	lastMessage!: number;
+	hostmask?: string; // NEW: Store hostmask
 
 	constructor(attr: Partial<User>, prefix?: Prefix) {
 		_.defaults(this, attr, {
@@ -15,6 +16,7 @@ class User {
 			away: "",
 			nick: "",
 			lastMessage: 0,
+			hostmask: undefined, // NEW: Default value
 		});
 
 		Object.defineProperty(this, "mode", {
@@ -37,6 +39,7 @@ class User {
 			nick: this.nick,
 			modes: this.modes,
 			lastMessage: this.lastMessage,
+			hostmask: this.hostmask, // NEW: Include hostmask in JSON sent to frontend
 		};
 	}
 }
