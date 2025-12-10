@@ -119,11 +119,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, PropType} from "vue";
+import {defineComponent, PropType, onMounted} from "vue";
 import localetime from "../../js/helpers/localetime";
 import {ClientNetwork, ClientMessage} from "../../js/types";
 import ParsedMessage from "../ParsedMessage.vue";
 import Username from "../Username.vue";
+import {updateCache} from "../../js/hostmaskCache";
 
 export default defineComponent({
 	name: "MessageTypeWhois",
@@ -141,7 +142,18 @@ export default defineComponent({
 			required: true,
 		},
 	},
-	setup() {
+	setup(props) {
+		// Cache the hostmask when WHOIS is displayed
+		onMounted(() => {
+			if (props.message.whois) {
+				const hostmask = `${props.message.whois.ident}@${props.message.whois.hostname}`;
+				const nick = props.message.whois.nick;
+				
+				console.log('💾 WHOIS: Caching hostmask for', nick, '→', hostmask);
+				updateCache(nick, hostmask);
+			}
+		});
+		
 		return {
 			localetime: (date: Date) => localetime(date),
 		};
