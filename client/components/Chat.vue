@@ -58,6 +58,12 @@
 						aria-label="Open your mentions"
 						@click="openMentions"
 					/>
+					<button 
+        				class="btn-history" 
+        				aria-label="View History"
+        				@click="showHistory">
+        				📜 View History
+					</button>
 					<button
 						class="menu"
 						aria-label="Open the context menu"
