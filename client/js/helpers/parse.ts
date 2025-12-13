@@ -27,13 +27,166 @@ type StyledFragment = Fragment & {
 	bgColor?: string;
 	hexColor?: string;
 	hexBgColor?: string;
-
 	bold?: boolean;
 	italic?: boolean;
 	underline?: boolean;
 	monospace?: boolean;
 	strikethrough?: boolean;
 };
+
+// Format MouseBot queue announcements for better readability
+function formatQueueMessage(text: string): string {
+	// Match: Inv queue (1-7 of 7): user1 (00:19:29), user2 (00:17:37), ...
+	// Also handles the weird ː character or regular colon
+	const queueMatch = text.match(/(Inv|Sup) queue \((\d+)-(\d+) of (\d+)\)[ː:](.+)/);
+
+	if (!queueMatch) return text;
+
+	const [, queueType, start, end, total, usersText] = queueMatch;
+
+	// Parse individual users - pattern: username (HH:MM:SS)
+	const userMatches = [...usersText.matchAll(/(\S+?)\s*\((\d{2}):(\d{2}):(\d{2})\)/g)];
+
+	if (userMatches.length === 0) return text;
+
+	// Build formatted output
+	let formatted = `━━━ ${queueType} Queue (${total} waiting) ━━━\n`;
+
+	userMatches.forEach((match, idx) => {
+		const [, username, hours, minutes, seconds] = match;
+		const h = parseInt(hours);
+		const m = parseInt(minutes);
+		const s = parseInt(seconds);
+
+		// Convert to readable duration
+		let duration: string;
+		if (h > 0) {
+			duration = `${h}h ${m}m`;
+		} else if (m > 0) {
+			duration = `${m}m ${s}s`;
+		} else if (s > 0) {
+			duration = `${s}s`;
+		} else {
+			duration = "just joined";
+		}
+
+		// Status indicator based on wait time
+		let status: string;
+		const totalMinutes = h * 60 + m;
+		if (totalMinutes < 5) status = "🟢";
+		// Green - normal
+		else if (totalMinutes < 15) status = "🟡";
+		// Yellow - moderate
+		else status = "🔴"; // Red - long wait
+
+		formatted += `${status} #${idx + 1} ${username} — ${duration}\n`;
+	});
+
+	// Calculate and add average wait time
+	const avgWaitMinutes =
+		userMatches.reduce((sum, match) => {
+			const h = parseInt(match[2]);
+			const m = parseInt(match[3]);
+			return sum + (h * 60 + m);
+		}, 0) / userMatches.length;
+
+	formatted += `━━━ Avg wait: ${Math.round(avgWaitMinutes)}m ━━━`;
+
+	return formatted;
+}
+
+// Format MineBot FLAGS listing for readability
+function formatFlagsListing(text: string): string {
+	// Check if this is a FLAGS listing
+	if (!text.includes("FLAGS listing") && !text.includes("Entry Nickname/Host")) {
+		return text;
+	}
+
+	// Flag definitions
+	const flagMap: Record<string, string> = {
+		// Owner/Founder
+		F: "👑 Founder",
+		q: "👑 Owner",
+		S: "🔱 Successor",
+
+		// Admin/Op levels
+		a: "🛡️ Admin",
+		A: "🛡️ Auto-Admin",
+		o: "⚔️ Op",
+		O: "⚔️ Auto-Op",
+		h: "🔰 HalfOp",
+		H: "🔰 Auto-HalfOp",
+		v: "🎤 Voice",
+		V: "🎤 Auto-Voice",
+
+		// Permissions
+		s: "⚙️ Set",
+		i: "✉️ Invite",
+		r: "🔨 Kick/Ban",
+		R: "🔄 Recover",
+		f: "📋 Access Modify",
+		t: "📝 Topic",
+		b: "🚫 Auto-Kickban",
+		e: "✅ Ban Exempt",
+	};
+
+	// Parse each entry line (format: "1     DinoDude               +AFORfiorstv         (FOUNDER)")
+	const entryRegex =
+		/^(\d+)\s+(\S+)\s+\+([A-Za-z]+)\s*(?:\(([^)]+)\))?\s*(?:\[modified (.+?)\])?/;
+
+	const lines = text.split("\n");
+	let formatted = "";
+	let isInListing = false;
+
+	for (const line of lines) {
+		// Start of listing
+		if (line.includes("Entry Nickname/Host")) {
+			formatted += "━━━━━ 📜 CHANNEL ACCESS LIST ━━━━━\n";
+			isInListing = true;
+			continue;
+		}
+
+		// End of listing
+		if (line.includes("End of") && line.includes("FLAGS listing")) {
+			formatted += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+			formatted += `✅ ${line.trim()}`;
+			break;
+		}
+
+		// Skip separator lines
+		if (line.includes("-----")) {
+			continue;
+		}
+
+		// Parse entry line
+		const match = line.match(entryRegex);
+		if (match && isInListing) {
+			const [, entryNum, nickname, flags, role, modified] = match;
+
+			// Parse individual flags
+			const flagsList = flags
+				.split("")
+				.map((flag) => flagMap[flag] || flag)
+				.join(", ");
+
+			// Build formatted entry
+			formatted += `\n#${entryNum} ${nickname}`;
+			if (role) {
+				formatted += ` (${role})`;
+			}
+			formatted += `\n   ├─ Flags: ${flagsList}`;
+			if (modified) {
+				formatted += `\n   └─ Modified: ${modified}`;
+			}
+			formatted += "\n";
+		} else if (isInListing && line.trim()) {
+			// Keep other lines as-is
+			formatted += line + "\n";
+		}
+	}
+
+	return formatted || text;
+}
 
 // Replace Anope FLAGS in text with readable descriptions
 function replaceFlagsInText(text: string): string {
@@ -43,31 +196,31 @@ function replaceFlagsInText(text: string): string {
 		"-v": "removes VOICE PERMISSION",
 		"+V": "AUTOMATIC VOICE",
 		"-V": "removes AUTOMATIC VOICE",
-		
+
 		// HalfOp permissions
 		"+h": "HALFOP PERMISSION",
 		"-h": "removes HALFOP PERMISSION",
 		"+H": "AUTOMATIC HALFOP",
 		"-H": "removes AUTOMATIC HALFOP",
-		
+
 		// Operator permissions
 		"+o": "OP PERMISSION",
 		"-o": "removes OP PERMISSION",
 		"+O": "AUTOMATIC OP",
 		"-O": "removes AUTOMATIC OP",
-		
+
 		// Admin permissions
 		"+a": "ADMIN PERMISSION",
 		"-a": "removes ADMIN PERMISSION",
 		"+A": "AUTOMATIC ADMIN",
 		"-A": "removes AUTOMATIC ADMIN",
-		
+
 		// Owner/Founder permissions
 		"+q": "OWNER PERMISSION",
 		"-q": "removes OWNER PERMISSION",
 		"+F": "FOUNDER ACCESS",
 		"-F": "removes FOUNDER ACCESS",
-		
+
 		// Channel management
 		"+s": "SET PERMISSION",
 		"-s": "removes SET PERMISSION",
@@ -166,13 +319,38 @@ function createFragment(fragment: StyledFragment): VNode | string | undefined {
 
 // Transform an IRC message potentially filled with styling control codes, URLs,
 // nicknames, and channels into a string of HTML elements to display on the client.
-function parse(text: string, message?: ClientMessage, network?: ClientNetwork, channel?: ClientChan) {
+function parse(
+	text: string,
+	message?: ClientMessage,
+	network?: ClientNetwork,
+	channel?: ClientChan
+) {
 	// Apply flag replacement before any other parsing
 	const processedText = replaceFlagsInText(text);
-	
+
 	// Extract the styling information and get the plain text version from it
 	const styleFragments = parseStyle(processedText);
 	const cleanText = styleFragments.map((fragment) => fragment.text).join("");
+
+	// Format MouseBot queue announcements AFTER style parsing removes color codes
+	if (
+		message?.from?.nick?.startsWith("MouseBot") &&
+		(cleanText.includes("Inv queue") || cleanText.includes("Sup queue"))
+	) {
+		const formattedText = formatQueueMessage(cleanText);
+		const formattedFragments = parseStyle(formattedText);
+		return formattedFragments.map((fragment) => createFragment(fragment));
+	}
+
+	// Format MineBot FLAGS listing
+	if (
+		message?.from?.nick === "MineBot" &&
+		(cleanText.includes("FLAGS listing") || cleanText.includes("Entry Nickname/Host"))
+	) {
+		const formattedText = formatFlagsListing(cleanText);
+		const formattedFragments = parseStyle(formattedText);
+		return formattedFragments.map((fragment) => createFragment(fragment));
+	}
 
 	// On the plain text, find channels and URLs, returned as "parts". Parts are
 	// arrays of objects containing start and end markers, as well as metadata
@@ -270,28 +448,13 @@ function parse(text: string, message?: ClientMessage, network?: ClientNetwork, c
 				fragments
 			);
 		} else if (textPart.nick) {
-			// DEBUG: Log entire message object
-			console.log('📬 FULL MESSAGE OBJECT:', message);
-			console.log('📬 message.from:', message?.from);
-			
-			// Create user object - try to get from message first (has hostmask)
-			let userWithHostmask = {
+			// Look up the user in the channel's userlist to get their mode
+			let userWithMode = {
 				nick: textPart.nick,
 				mode: undefined,
-				hostmask: undefined,
 			};
-			
-			// First: Check if this nick is the message sender (has full info including hostmask)
-			if (message && message.from && message.from.nick === textPart.nick) {
-				console.log('📧 Using message.from for', textPart.nick, '- Full object:', message.from);
-				userWithHostmask = {
-					nick: message.from.nick,
-					mode: message.from.mode,
-					hostmask: (message.from as any).hostmask,
-				};
-			}
-			
-			// Second: Look up in channel's userlist for mode (but userlist doesn't have hostmask)
+
+			// Use the channel parameter directly to look up users
 			if (channel && channel.users && Array.isArray(channel.users)) {
 				const foundUser = channel.users.find((u) => {
 					if (u && u.nick && typeof u.nick === "string") {
@@ -299,19 +462,17 @@ function parse(text: string, message?: ClientMessage, network?: ClientNetwork, c
 					}
 					return false;
 				});
-				
-				if (foundUser && !userWithHostmask.mode) {
-					userWithHostmask.mode = foundUser.mode;
+
+				if (foundUser) {
+					userWithMode = foundUser;
 				}
 			}
-			
+
 			return createElement(
 				Username,
 				{
-					user: userWithHostmask,
+					user: userWithMode,
 					dir: "auto",
-					channel: channel,
-					network: network,
 				},
 				{
 					default: () => fragments,
