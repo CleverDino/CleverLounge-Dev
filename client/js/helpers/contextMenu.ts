@@ -310,7 +310,7 @@ export function generateUserContextMenu(
 
 	const items: ContextMenuItem[] = [
 		{
-			label: user.nick,
+			label: user.modes.join("") + user.nick,
 			type: "item",
 			class: "user",
 			action: whois,
