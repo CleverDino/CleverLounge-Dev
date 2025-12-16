@@ -153,112 +153,6 @@ yarn build:server
 Run tests
 yarn test
 
-### Migration Methods
-
-## Method 1: Point CleverLounge at Existing Data (Recommended)
-
-Keep your existing data, just change the code:
-
-# Clone CleverLounge
-
-git clone https://github.com/CleverDinoProductions/CleverLounge.git
-cd CleverLounge
-
-# Install dependencies
-
-yarn install
-
-# Build CleverLounge
-
-NODE_ENV=production yarn build
-
-# Run CleverLounge pointing at your existing data
-
-THELOUNGE_HOME=/home/username/.thelounge yarn start
-
-What happens:
-
-✅ Uses your existing config.js
-
-✅ Keeps all your users and passwords
-
-✅ Maintains all IRC connections
-
-✅ Preserves all logs and history
-
-✅ No data migration needed
-
-On Windows:
-
-set THELOUNGE_HOME=C:\Users\YourName\.thelounge
-yarn start
-
-## Method 2: Run Both Side-by-Side (Testing)
-
-Test CleverLounge without affecting your production setup:
-
-# Create separate data directory for testing
-
-mkdir ~/.cleverlounge
-
-# Run CleverLounge with test data
-
-THELOUNGE_HOME=/home/username/.cleverlounge yarn start --port 9001
-
-# Your original The Lounge still runs on port 9000
-
-Now you have:
-
-Original The Lounge: http://localhost:9000 (production)
-
-CleverLounge: http://localhost:9001 (testing)
-
-To migrate later:
-
-# Copy your data to CleverLounge
-
-cp -r ~/.thelounge/\* ~/.cleverlounge/
-
-# Or just switch to using ~/.thelounge
-
-THELOUNGE_HOME=/home/username/.thelounge yarn start
-
-## Method 3: Replace System Installation
-
-For users who installed The Lounge globally with npm:
-
-# Stop your current The Lounge
-
-sudo systemctl stop thelounge
-
-# or
-
-pm2 stop thelounge
-
-# Clone CleverLounge
-
-git clone https://github.com/CleverDinoProductions/CleverLounge.git /opt/cleverlounge
-cd /opt/cleverlounge
-
-# Install and build
-
-yarn install
-NODE_ENV=production yarn build
-
-# Run as service (systemd example)
-
-sudo systemctl edit thelounge.service
-Edit service file to point to CleverLounge:
-
-[Service]
-ExecStart=/usr/bin/node /opt/cleverlounge/index.js start
-Environment="THELOUNGE_HOME=/home/thelounge/.thelounge"
-text
-
-# Restart with CleverLounge code
-
-sudo systemctl start thelounge
-
 ## 🔄 Migrating from The Lounge
 
 Already using The Lounge? You can switch to CleverLounge without losing any data!
@@ -277,7 +171,7 @@ Run with your existing data
 THELOUNGE_HOME=/path/to/your/.thelounge yarn start
 
 **On Windows:**
-set THELOUNGE_HOME=C:\Users\YourName.thelounge
+set THELOUNGE_HOME=C:\Users\YourName\thelounge
 yarn start
 
 ### What Gets Preserved
@@ -376,6 +270,165 @@ Start original The Lounge with same data directory
 thelounge start
 
 Your data is **never locked** to CleverLounge. It's fully compatible with standard The Lounge!
+
+## 🚀 Quick Start Scripts
+
+Pre-configured startup scripts for easy deployment across platforms.
+
+### Windows
+
+**start-cleverlounge.bat:**
+@echo off
+cd /d <driveletter>:\CleverLounge\CleverLounge
+SET THELOUNGE_HOME=<driveletter>:\thelounge
+SET NODE_ENV=production
+node index.js start
+pause
+
+**Usage:**
+
+1. Edit paths in `start-cleverlounge.bat`
+2. Double-click to start
+3. Window stays open showing logs
+
+### macOS
+
+**start-cleverlounge.sh:**
+#!/bin/bash
+cd ~/CleverLounge
+export THELOUNGE_HOME=~/.thelounge
+export NODE_ENV=production
+node index.js start
+
+**Setup:**
+chmod +x start-cleverlounge.sh
+./start-cleverlounge.sh
+
+### Linux (Desktop/VPS)
+
+**start-cleverlounge.sh:**
+#!/bin/bash
+cd /home/$(whoami)/CleverLounge
+export THELOUNGE_HOME=/home/$(whoami)/.thelounge
+export NODE_ENV=production
+node index.js start
+
+**Setup:**
+chmod +x start-cleverlounge.sh
+./start-cleverlounge.sh
+
+### Linux with PM2 (Recommended for Servers)
+
+**start-cleverlounge-pm2.sh:**
+#!/bin/bash
+cd /home/$(whoami)/CleverLounge
+export THELOUNGE_HOME=/home/$(whoami)/.thelounge
+export NODE_ENV=production
+
+pm2 start index.js
+--name cleverlounge
+--time
+--env production
+-- start
+
+pm2 save
+
+**Setup:**
+chmod +x start-cleverlounge-pm2.sh
+./start-cleverlounge-pm2.sh
+
+View logs
+pm2 logs cleverlounge
+
+Start on boot
+pm2 startup
+
+### Linux with Systemd (Production)
+
+**Create service:**
+sudo nano /etc/systemd/system/cleverlounge.service
+
+**Service file:**
+[Unit]
+Description=CleverLounge IRC Client
+After=network.target
+
+[Service]
+Type=simple
+User=youruser
+WorkingDirectory=/home/youruser/CleverLounge
+Environment="THELOUNGE_HOME=/home/youruser/.thelounge"
+Environment="NODE_ENV=production"
+ExecStart=/usr/bin/node /home/youruser/CleverLounge/index.js start
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
+text
+
+**Enable and start:**
+sudo systemctl daemon-reload
+sudo systemctl enable cleverlounge
+sudo systemctl start cleverlounge
+sudo systemctl status cleverlounge
+
+### Docker Compose
+
+**docker-compose.yml:**
+version: '3.8'
+services:
+cleverlounge:
+build: .
+container_name: cleverlounge
+restart: unless-stopped
+ports:
+
+- "9000:9000"
+  volumes:
+- ./data:/var/opt/thelounge
+  environment:
+- THELOUNGE_HOME=/var/opt/thelounge
+- NODE_ENV=production
+
+text
+
+**Start:**
+docker-compose up -d
+
+text
+
+### Configuration
+
+All scripts use these environment variables:
+
+| Variable         | Purpose                 | Example                 |
+| ---------------- | ----------------------- | ----------------------- |
+| `THELOUNGE_HOME` | Data directory location | `/home/user/.thelounge` |
+| `NODE_ENV`       | Production mode         | `production`            |
+
+**Customize paths** in the scripts to match your installation.
+
+### Auto-start on Boot
+
+**Windows:**
+
+1. Press `Win+R`, type `shell:startup`
+2. Create shortcut to `start-cleverlounge.bat`
+
+**macOS (LaunchAgent):**
+
+<!-- ~/Library/LaunchAgents/com.cleverlounge.plist --> <?xml version="1.0" encoding="UTF-8"?> <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"> <plist version="1.0"> <dict> <key>Label</key> <string>com.cleverlounge</string> <key>ProgramArguments</key> <array> <string>/Users/youruser/CleverLounge/start-cleverlounge.sh</string> </array> <key>RunAtLoad</key> <true/> <key>KeepAlive</key> <true/> </dict> </plist> ```
+
+text
+launchctl load ~/Library/LaunchAgents/com.cleverlounge.plist
+Linux:
+
+Use systemd (see above), or
+
+Add to /etc/rc.local, or
+
+Use cron: @reboot /path/to/start-cleverlounge.sh
 
 ### Import Hostmask Cache (Optional)
 
