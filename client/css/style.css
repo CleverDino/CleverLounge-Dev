@@ -2994,146 +2994,146 @@ part/quit messages where we don't load previews (adds a blank line otherwise) */
 
 /* MAM Official Class Colors - Username text colors with backgrounds */
 
-#chat .names .user.mam-class-dev { 
-	color: #000 !important; 
+#chat .names .user.mam-class-dev {
+	color: #000 !important;
 	background-color: #093 !important;
 	font-weight: 500 !important;
 }
 
-#chat .names .user.mam-class-sysop { 
-	color: #FFF !important; 
+#chat .names .user.mam-class-sysop {
+	color: #FFF !important;
 	background-color: #336699 !important;
 	font-weight: bold !important;
 }
 
-#chat .names .user.mam-class-sr-admin { 
-	color: #000 !important; 
+#chat .names .user.mam-class-sr-admin {
+	color: #000 !important;
 	background-color: #006600 !important;
 	font-weight: bold !important;
 }
 
-#chat .names .user.mam-class-admin { 
-	color: #000 !important; 
+#chat .names .user.mam-class-admin {
+	color: #000 !important;
 	background-color: #30AA0F !important;
 	font-weight: bold !important;
 }
 
-#chat .names .user.mam-class-uploaders-c { 
-	color: #FFF !important; 
+#chat .names .user.mam-class-uploaders-c {
+	color: #FFF !important;
 	background-color: #B05F3C !important;
 	font-weight: bold !important;
 }
 
-#chat .names .user.mam-class-sr-mod { 
-	color: #000 !important; 
+#chat .names .user.mam-class-sr-mod {
+	color: #000 !important;
 	background-color: #FF4500 !important;
 	font-weight: bold !important;
 }
 
-#chat .names .user.mam-class-mod { 
-	color: #000 !important; 
+#chat .names .user.mam-class-mod {
+	color: #000 !important;
 	background-color: #FFA500 !important;
 	font-weight: bold !important;
 }
 
-#chat .names .user.mam-class-t-mod { 
-	color: #000 !important; 
+#chat .names .user.mam-class-t-mod {
+	color: #000 !important;
 	background-color: #E9967A !important;
 	font-weight: 500 !important;
 }
 
-#chat .names .user.mam-class-f-mod { 
-	color: #000 !important; 
+#chat .names .user.mam-class-f-mod {
+	color: #000 !important;
 	background-color: #FF7F50 !important;
 	font-weight: 500 !important;
 }
 
-#chat .names .user.mam-class-support { 
-	color: #000 !important; 
+#chat .names .user.mam-class-support {
+	color: #000 !important;
 	background-color: #FF0099 !important;
 	font-weight: 500 !important;
 }
 
-#chat .names .user.mam-class-entry { 
-	color: #000 !important; 
+#chat .names .user.mam-class-entry {
+	color: #000 !important;
 	background-color: #FF0A23 !important;
 	font-weight: 500 !important;
 }
 
-#chat .names .user.mam-class-uploader { 
-	color: #FFF !important; 
+#chat .names .user.mam-class-uploader {
+	color: #FFF !important;
 	background-color: #B05F3C !important;
 	font-weight: 500 !important;
 }
 
-#chat .names .user.mam-class-mouseketeer { 
-	color: #FFF !important; 
+#chat .names .user.mam-class-mouseketeer {
+	color: #FFF !important;
 	background-color: #696969 !important;
 	font-weight: 500 !important;
 }
 
-#chat .names .user.mam-class-supporter { 
-	color: #000 !important; 
+#chat .names .user.mam-class-supporter {
+	color: #000 !important;
 	background-color: #BABA25 !important;
 	font-weight: 500 !important;
 }
 
-#chat .names .user.mam-class-elite { 
-	color: #CC0 !important; 
+#chat .names .user.mam-class-elite {
+	color: #CC0 !important;
 	background-color: #3366CC !important;
 	font-weight: bold !important;
 }
 
-#chat .names .user.mam-class-e-vip { 
-	color: #FFF !important; 
+#chat .names .user.mam-class-e-vip {
+	color: #FFF !important;
 	background-color: #7C2FE0 !important;
 	font-weight: bold !important;
 }
 
-#chat .names .user.mam-class-vip { 
-	color: #FFF !important; 
+#chat .names .user.mam-class-vip {
+	color: #FFF !important;
 	background-color: #985BE8 !important;
 	font-weight: 500 !important;
 }
 
-#chat .names .user.mam-class-p-user { 
-	color: #FFF !important; 
+#chat .names .user.mam-class-p-user {
+	color: #FFF !important;
 	background-color: #D21E36 !important;
 	font-weight: 500 !important;
 }
 
-#chat .names .user.mam-class-user { 
-	color: #000 !important; 
+#chat .names .user.mam-class-user {
+	color: #000 !important;
 	background-color: #669999 !important;
 }
 
-#chat .names .user.mam-class-mouse { 
-	color: #000 !important; 
+#chat .names .user.mam-class-mouse {
+	color: #000 !important;
 	background-color: #ff43b5 !important;
 }
 
 /* Users WITHOUT MAM class use normal IRC usermode colors */
-#chat .names .user.user-mode-owner:not([class*="mam-class-"]) { 
+#chat .names .user.user-mode-owner:not([class*="mam-class-"]) {
 	color: #e91e63 !important;
 }
 
-#chat .names .user.user-mode-admin:not([class*="mam-class-"]) { 
+#chat .names .user.user-mode-admin:not([class*="mam-class-"]) {
 	color: #ff5722 !important;
 }
 
-#chat .names .user.user-mode-op:not([class*="mam-class-"]) { 
+#chat .names .user.user-mode-op:not([class*="mam-class-"]) {
 	color: #4caf50 !important;
 }
 
-#chat .names .user.user-mode-half-op:not([class*="mam-class-"]) { 
+#chat .names .user.user-mode-half-op:not([class*="mam-class-"]) {
 	color: #2196f3 !important;
 }
 
-#chat .names .user.user-mode-voice:not([class*="mam-class-"]) { 
+#chat .names .user.user-mode-voice:not([class*="mam-class-"]) {
 	color: #9c27b0 !important;
 }
 
-#chat .names .user.user-mode-normal:not([class*="mam-class-"]) { 
+#chat .names .user.user-mode-normal:not([class*="mam-class-"]) {
 	color: var(--body-color) !important;
 }
 
@@ -3150,145 +3150,471 @@ part/quit messages where we don't load previews (adds a blank line otherwise) */
 
 /* MAM Official Class Colors - For usernames in chat */
 
-#chat .msg .from .user.mam-class-dev { 
-	color: #000 !important; 
+#chat .msg .from .user.mam-class-dev {
+	color: #000 !important;
 	background-color: #093 !important;
 	font-weight: 500 !important;
 }
 
-#chat .msg .from .user.mam-class-sysop { 
-	color: #FFF !important; 
+#chat .msg .from .user.mam-class-sysop {
+	color: #FFF !important;
 	background-color: #336699 !important;
 	font-weight: bold !important;
 }
 
-#chat .msg .from .user.mam-class-sr-admin { 
-	color: #000 !important; 
+#chat .msg .from .user.mam-class-sr-admin {
+	color: #000 !important;
 	background-color: #006600 !important;
 	font-weight: bold !important;
 }
 
-#chat .msg .from .user.mam-class-admin { 
-	color: #000 !important; 
+#chat .msg .from .user.mam-class-admin {
+	color: #000 !important;
 	background-color: #30AA0F !important;
 	font-weight: bold !important;
 }
 
-#chat .msg .from .user.mam-class-uploaders-c { 
-	color: #FFF !important; 
+#chat .msg .from .user.mam-class-uploaders-c {
+	color: #FFF !important;
 	background-color: #B05F3C !important;
 	font-weight: bold !important;
 }
 
-#chat .msg .from .user.mam-class-sr-mod { 
-	color: #000 !important; 
+#chat .msg .from .user.mam-class-sr-mod {
+	color: #000 !important;
 	background-color: #FF4500 !important;
 	font-weight: bold !important;
 }
 
-#chat .msg .from .user.mam-class-mod { 
-	color: #000 !important; 
+#chat .msg .from .user.mam-class-mod {
+	color: #000 !important;
 	background-color: #FFA500 !important;
 	font-weight: bold !important;
 }
 
-#chat .msg .from .user.mam-class-t-mod { 
-	color: #000 !important; 
+#chat .msg .from .user.mam-class-t-mod {
+	color: #000 !important;
 	background-color: #E9967A !important;
 	font-weight: 500 !important;
 }
 
-#chat .msg .from .user.mam-class-f-mod { 
-	color: #000 !important; 
+#chat .msg .from .user.mam-class-f-mod {
+	color: #000 !important;
 	background-color: #FF7F50 !important;
 	font-weight: 500 !important;
 }
 
-#chat .msg .from .user.mam-class-support { 
-	color: #000 !important; 
+#chat .msg .from .user.mam-class-support {
+	color: #000 !important;
 	background-color: #FF0099 !important;
 	font-weight: 500 !important;
 }
 
-#chat .msg .from .user.mam-class-entry { 
-	color: #000 !important; 
+#chat .msg .from .user.mam-class-entry {
+	color: #000 !important;
 	background-color: #FF0A23 !important;
 	font-weight: 500 !important;
 }
 
-#chat .msg .from .user.mam-class-uploader { 
-	color: #FFF !important; 
+#chat .msg .from .user.mam-class-uploader {
+	color: #FFF !important;
 	background-color: #B05F3C !important;
 	font-weight: 500 !important;
 }
 
-#chat .msg .from .user.mam-class-mouseketeer { 
-	color: #FFF !important; 
+#chat .msg .from .user.mam-class-mouseketeer {
+	color: #FFF !important;
 	background-color: #696969 !important;
 	font-weight: 500 !important;
 }
 
-#chat .msg .from .user.mam-class-supporter { 
-	color: #000 !important; 
+#chat .msg .from .user.mam-class-supporter {
+	color: #000 !important;
 	background-color: #BABA25 !important;
 	font-weight: 500 !important;
 }
 
-#chat .msg .from .user.mam-class-elite { 
-	color: #CC0 !important; 
+#chat .msg .from .user.mam-class-elite {
+	color: #CC0 !important;
 	background-color: #3366CC !important;
 	font-weight: bold !important;
 }
 
-#chat .msg .from .user.mam-class-e-vip { 
-	color: #FFF !important; 
+#chat .msg .from .user.mam-class-e-vip {
+	color: #FFF !important;
 	background-color: #7C2FE0 !important;
 	font-weight: bold !important;
 }
 
-#chat .msg .from .user.mam-class-vip { 
-	color: #FFF !important; 
+#chat .msg .from .user.mam-class-vip {
+	color: #FFF !important;
 	background-color: #985BE8 !important;
 	font-weight: 500 !important;
 }
 
-#chat .msg .from .user.mam-class-p-user { 
-	color: #FFF !important; 
+#chat .msg .from .user.mam-class-p-user {
+	color: #FFF !important;
 	background-color: #D21E36 !important;
 	font-weight: 500 !important;
 }
 
-#chat .msg .from .user.mam-class-user { 
-	color: #000 !important; 
+#chat .msg .from .user.mam-class-user {
+	color: #000 !important;
 	background-color: #669999 !important;
 }
 
-#chat .msg .from .user.mam-class-mouse { 
-	color: #000 !important; 
+#chat .msg .from .user.mam-class-mouse {
+	color: #000 !important;
 	background-color: #ff43b5 !important;
 }
 
 /* Users WITHOUT MAM class in chat use normal IRC usermode colors */
-#chat .msg .from .user.user-mode-owner:not([class*="mam-class-"]) { 
+#chat .msg .from .user.user-mode-owner:not([class*="mam-class-"]) {
 	color: #e91e63 !important;
 }
 
-#chat .msg .from .user.user-mode-admin:not([class*="mam-class-"]) { 
+#chat .msg .from .user.user-mode-admin:not([class*="mam-class-"]) {
 	color: #ff5722 !important;
 }
 
-#chat .msg .from .user.user-mode-op:not([class*="mam-class-"]) { 
+#chat .msg .from .user.user-mode-op:not([class*="mam-class-"]) {
 	color: #4caf50 !important;
 }
 
-#chat .msg .from .user.user-mode-half-op:not([class*="mam-class-"]) { 
+#chat .msg .from .user.user-mode-half-op:not([class*="mam-class-"]) {
 	color: #2196f3 !important;
 }
 
-#chat .msg .from .user.user-mode-voice:not([class*="mam-class-"]) { 
+#chat .msg .from .user.user-mode-voice:not([class*="mam-class-"]) {
 	color: #9c27b0 !important;
 }
 
-#chat .msg .from .user.user-mode-normal:not([class*="mam-class-"]) { 
+#chat .msg .from .user.user-mode-normal:not([class*="mam-class-"]) {
 	color: var(--body-color) !important;
 }
+
+/* ============================================
+   IRC Mode Colors for Chat Messages
+   ============================================ */
+.user.user-mode-owner[class*="color-"] {
+    color: gold !important;
+}
+
+.user.user-mode-admin[class*="color-"] {
+    color: violet !important;
+}
+
+.user.user-mode-op[class*="color-"] {
+    color: red !important;
+}
+
+.user.user-mode-half-op[class*="color-"] {
+    color: darkorange !important;
+}
+
+.user.user-mode-voice[class*="color-"] {
+    color: blue !important;
+}
+
+.user.user-mode-normal[class*="color-"] {
+    color: cornflowerblue !important;
+}
+
+/* ============================================
+   Anope FLAGS Tooltips
+   ============================================ */
+.flag-description {
+    display: inline-block;
+    margin-left: 8px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9em;
+}
+
+/* Style specific flag types */
+.flag-founder { color: gold !important; }
+.flag-admin { color: violet !important; }
+.flag-op { color: red !important; }
+.flag-voice { color: cornflowerblue !important; }
+
+/* ============================================
+   MAM Class Colors - Exact from Website
+   ============================================ */
+
+/* Staff Classes */
+.mam-class-dev,
+.mam-class-sysop {
+    color: #FFFFFF !important;
+    background-color: #336699 !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 900;
+}
+
+.mam-class-sr-admin {
+    color: #000000 !important;
+    background-color: #006600 !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 900;
+}
+
+.mam-class-admin {
+    color: #000000 !important;
+    background-color: #30AA0F !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 900;
+}
+
+.mam-class-uploaders-c {
+    color: #FFFFFF !important;
+    background-color: #B05F3C !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.mam-class-sr-mod {
+    color: #000000 !important;
+    background-color: #FF4500 !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.mam-class-mod {
+    color: #000000 !important;
+    background-color: #FFA500 !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.mam-class-t-mod {
+    color: #000000 !important;
+    background-color: #E9967A !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.mam-class-f-mod {
+    color: #000000 !important;
+    background-color: #FF7F50 !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.mam-class-support {
+    color: #000000 !important;
+    background-color: #FF0099 !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.mam-class-entry {
+    color: #000000 !important;
+    background-color: #FF0A23 !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+/* Member Classes */
+.mam-class-uploader {
+    color: #FFFFFF !important;
+    background-color: #B05F3C !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.mam-class-mouseketeer {
+    color: #FFFFFF !important;
+    background-color: #696969 !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.mam-class-supporter {
+    color: #000000 !important;
+    background-color: #BABA25 !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.mam-class-elite {
+    color: #CC0 !important;
+    background-color: #3366CC !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.mam-class-e-vip {
+    color: #FFFFFF !important;
+    background-color: #7C2FE0 !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.mam-class-vip {
+    color: #FFFFFF !important;
+    background-color: #985BE8 !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.mam-class-p-user {
+    color: #FFFFFF !important;
+    background-color: #D21E36 !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.mam-class-user {
+    color: #000000 !important;
+    background-color: #669999 !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+.mam-class-mouse {
+    color: #000000 !important;
+    background-color: #ff43b5 !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+/* ============================================
+   MAM Userlist Group Headers
+   ============================================ */
+.user-group-header {
+    padding: 6px 10px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+    font-weight: bold;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(4px);
+}
+
+/* First group header shouldn't have top margin */
+.user-mode:first-child .user-group-header {
+    margin-top: 0;
+}
+
+/* Enhance header visibility when scrolling */
+.user-group-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    z-index: -1;
+    opacity: 0.95;
+}
+
+/* ============================================
+   MAM Class Badges (inline next to usernames)
+   ============================================ */
+.mam-class-badge {
+    font-size: 0.75em;
+    margin-left: 4px;
+    opacity: 0.95;
+    font-weight: normal;
+    padding: 2px 5px;
+    border-radius: 3px;
+    background: rgba(0, 0, 0, 0.3);
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+/* ============================================
+   MAM Queue-Specific Styles
+   ============================================ */
+.mam-class-support-queue {
+    color: #000000 !important;
+    background-color: #FF0099 !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.mam-class-invite-queue {
+    color: #FFFFFF !important;
+    background-color: #0066CC !important;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+/* Highlight queue members in userlist */
+.userlist .mam-class-support-queue .user,
+.userlist .mam-class-invite-queue .user {
+    animation: pulse-queue 2s ease-in-out infinite;
+}
+
+@keyframes pulse-queue {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* ============================================
+   MAM User Enhancements
+   ============================================ */
+/* Add subtle indicator for MAM users in userlist */
+.userlist .user[data-mam-class] {
+    font-weight: 500;
+    position: relative;
+}
+
+/* Left border indicator for MAM users */
+.userlist .user[data-mam-class]::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 2px;
+    bottom: 2px;
+    width: 3px;
+    background: currentColor;
+    opacity: 0.4;
+    border-radius: 2px;
+}
+
+/* ============================================
+   MAM Channel Indicators (optional)
+   ============================================ */
+/* Add mouse emoji to MAM-enabled channels in sidebar */
+#sidebar .chan[data-has-mam-users="true"]::before {
+    content: '🐭 ';
+    opacity: 0.6;
+    margin-right: 2px;
+    font-size: 0.9em;
+}
+
+/* Highlight MAM channels slightly */
+#sidebar .chan[data-has-mam-users="true"] {
+    border-left: 2px solid rgba(51, 102, 153, 0.3);
+}
+
+/* ============================================
+   End MAM Styles
+   ============================================ */
