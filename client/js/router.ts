@@ -15,6 +15,7 @@ import AppearanceSettings from "../components/Settings/Appearance.vue";
 import GeneralSettings from "../components/Settings/General.vue";
 import AccountSettings from "../components/Settings/Account.vue";
 import NotificationSettings from "../components/Settings/Notifications.vue";
+import TrackerFeatures from "../components/Settings/TrackerFeatures.vue";
 import {ClientChan} from "./types";
 
 const router = createRouter({
@@ -53,6 +54,11 @@ const router = createRouter({
 					name: "Appearance",
 					path: "appearance",
 					component: AppearanceSettings,
+				},
+				{
+					name: "Tracker Features",
+					path: "tracker-features",
+					component: TrackerFeatures,
 				},
 				{
 					name: "Account",

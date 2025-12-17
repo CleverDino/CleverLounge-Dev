@@ -89,6 +89,7 @@ import {computed, defineComponent, nextTick, PropType, ref} from "vue";
 import type {UserInMessage} from "../../shared/types/msg";
 import type {ClientChan, ClientUser} from "../js/types";
 import {hostmaskCache} from "../js/hostmaskCache";
+import {useStore} from "../js/store"; // ADD THIS
 import Username from "./Username.vue";
 
 const modes = {
@@ -173,14 +174,39 @@ export default defineComponent({
 		const activeUser = ref<UserInMessage | null>();
 		const userlist = ref<HTMLDivElement>();
 
+		// ADD: Get store and settings
+		const store = useStore();
+
+		// ADD THIS DEBUG
+		console.log("🐭 ChatUserList loaded", {
+			channel: props.channel.name,
+			userCount: props.channel.users.length,
+		});
+
+		// ADD: Access tracker feature settings
+		const trackerFeaturesEnabled = computed(() => store.state.settings.trackerFeaturesEnabled);
+
+		const enableClassGrouping = computed(() => store.state.settings.enableClassGrouping);
+
+		const enableQueueDetection = computed(() => store.state.settings.enableQueueDetection);
+
+		const showUserCount = computed(() => store.state.settings.showUserCount);
+
 		// Check if this is a queue channel
 		const isQueueChannel = computed(() => {
+			// ADD: Check if queue detection is enabled
+			if (!trackerFeaturesEnabled.value || !enableQueueDetection.value) {
+				return false;
+			}
+
 			const channelName = props.channel.name.toLowerCase();
 			return channelName === "#help" || channelName === "#anonamouse.net";
 		});
 
 		// Get queue type for the channel
 		const getQueueType = computed(() => {
+			if (!isQueueChannel.value) return null;
+
 			const channelName = props.channel.name.toLowerCase();
 			if (channelName === "#help") return "support-queue";
 			if (channelName === "#anonamouse.net") return "invite-queue";
@@ -189,6 +215,11 @@ export default defineComponent({
 
 		// Extract MAM class from hostmask (same logic as Username.vue)
 		const getMamClassFromHostmask = (nick: string): string | null => {
+			// ADD: Check if hostmask cache is enabled
+			if (!trackerFeaturesEnabled.value || !store.state.settings.enableHostmaskCache) {
+				return null;
+			}
+
 			// Try to get hostmask from user object first
 			const user = props.channel.users.find((u) => u.nick === nick);
 			let hostmask = (user as any)?.hostmask;
@@ -203,7 +234,6 @@ export default defineComponent({
 			}
 
 			// Match pattern: user@CLASS.TYPE.mam
-			// Examples: user@elite.member.mam, user@mod.staff.mam
 			const match = hostmask.match(/@([^.]+)\.([^.]+)\.mam/);
 
 			if (match) {
@@ -215,6 +245,11 @@ export default defineComponent({
 
 		// Determine if we should group by MAM class
 		const shouldGroupByMAMClass = computed(() => {
+			// ADD: Check if tracker features and class grouping are enabled
+			if (!trackerFeaturesEnabled.value || !enableClassGrouping.value) {
+				return false;
+			}
+
 			// Queue channels use special grouping
 			if (isQueueChannel.value) {
 				return false;
@@ -387,7 +422,7 @@ export default defineComponent({
 			return modes[group] as typeof modes;
 		};
 
-		// Get display label for group header
+		// MODIFY: Get display label for group header
 		const getGroupLabel = (group: string) => {
 			// Queue-specific labels
 			if (group === "support-queue") {
@@ -400,7 +435,15 @@ export default defineComponent({
 			if (shouldGroupByMAMClass.value || isQueueChannel.value) {
 				// Check if it's a MAM class
 				if (mamClassLabels[group]) {
-					return mamClassLabels[group];
+					let label = mamClassLabels[group];
+
+					// ADD: Show user count if enabled
+					if (showUserCount.value) {
+						const count = groupedUsers.value[group]?.length || 0;
+						label += ` (${count})`;
+					}
+
+					return label;
 				}
 
 				// It's an IRC mode fallback
@@ -414,14 +457,20 @@ export default defineComponent({
 					"": "IRC: Regular Users",
 				};
 
-				return modeMap[group] || "IRC: " + group;
+				let label = modeMap[group] || "IRC: " + group;
+
+				// ADD: Show user count if enabled
+				if (showUserCount.value) {
+					const count = groupedUsers.value[group]?.length || 0;
+					label += ` (${count})`;
+				}
+
+				return label;
 			}
 			return "";
 		};
 
 		const selectUser = () => {
-			// Simulate a click on the active user to open the context menu.
-			// Coordinates are provided to position the menu correctly.
 			if (!activeUser.value || !userlist.value) {
 				return;
 			}
@@ -452,7 +501,6 @@ export default defineComponent({
 		};
 
 		const scrollToActiveUser = () => {
-			// Scroll the list if needed after the active class is applied
 			void nextTick(() => {
 				const el = userlist.value?.querySelector(".active");
 				el?.scrollIntoView({block: "nearest", inline: "nearest"});
@@ -460,19 +508,15 @@ export default defineComponent({
 		};
 
 		const navigateUserList = (event: Event, direction: number) => {
-			// Prevent propagation to stop global keybind handler from capturing pagedown/pageup
-			// and redirecting it to the message list container for scrolling
 			event.stopImmediatePropagation();
 			event.preventDefault();
 
 			let users = props.channel.users;
 
-			// Only using filteredUsers when we have to avoids filtering when it's not needed
 			if (userSearchInput.value && filteredUsers.value) {
 				users = filteredUsers.value.map((result) => result.original);
 			}
 
-			// Bail out if there's no users to select
 			if (!users.length) {
 				activeUser.value = null;
 				return;
@@ -483,7 +527,6 @@ export default defineComponent({
 				scrollToActiveUser();
 			};
 
-			// If there's no active user select the first or last one depending on direction
 			if (!activeUser.value) {
 				abort();
 				return;
@@ -498,8 +541,6 @@ export default defineComponent({
 
 			currentIndex += direction;
 
-			// Wrap around the list if necessary. Normaly each loop iterates once at most,
-			// but might iterate more often if pgup or pgdown are used in a very short user list
 			while (currentIndex < 0) {
 				currentIndex += users.length;
 			}

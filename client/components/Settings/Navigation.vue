@@ -5,6 +5,11 @@
 		<ul role="navigation" aria-label="Settings tabs">
 			<SettingTabItem name="General" class-name="general" to="" />
 			<SettingTabItem name="Appearance" class-name="appearance" to="appearance" />
+			<SettingTabItem
+				name="Tracker Features"
+				class-name="tracker-features"
+				to="tracker-features"
+			/>
 			<SettingTabItem name="Notifications" class-name="notifications" to="notifications" />
 			<SettingTabItem name="Account" class-name="account" to="account" />
 		</ul>

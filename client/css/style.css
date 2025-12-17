@@ -3618,3 +3618,97 @@ part/quit messages where we don't load previews (adds a blank line otherwise) */
 /* ============================================
    End MAM Styles
    ============================================ */
+
+/* ============================================
+   TRACKER FEATURES - CONDITIONAL STYLES
+   ============================================ */
+
+/* Official Colors (enabled by default) */
+body.tracker-official-colors .mam-class-dev {
+    background-color: #336699 !important;
+}
+
+body.tracker-official-colors .mam-class-admin {
+    background-color: #30AA0F !important;
+}
+
+/* ... rest of MAM colors */
+
+/* Hide colors when disabled */
+body:not(.tracker-official-colors) .mam-class-dev,
+body:not(.tracker-official-colors) .mam-class-admin {
+    background-color: inherit !important;
+}
+
+/* Badges (show/hide) */
+body.show-tracker-badges .mam-class-badge {
+    display: inline-block;
+}
+
+body:not(.show-tracker-badges) .mam-class-badge {
+    display: none;
+}
+
+/* Compact badges mode */
+body.compact-badges .mam-class-badge {
+    font-size: 10px;
+    padding: 1px 4px;
+}
+
+body.compact-badges .mam-class-badge-icon {
+    display: none; /* Hide icons in compact mode */
+}
+
+/* Sticky headers */
+body.sticky-userlist-headers .user-group-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--body-bg-color);
+}
+
+/* Queue animation */
+body.animate-queue .user-in-queue {
+    animation: pulse-queue 2s ease-in-out infinite;
+}
+
+@keyframes pulse-queue {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Staff glow effect */
+body.staff-glow .mam-class-dev,
+body.staff-glow .mam-class-admin,
+body.staff-glow .mam-class-mod {
+    box-shadow: 0 0 8px rgba(48, 170, 15, 0.5);
+    transition: box-shadow 0.3s ease;
+}
+
+body.staff-glow .mam-class-dev:hover,
+body.staff-glow .mam-class-admin:hover,
+body.staff-glow .mam-class-mod:hover {
+    box-shadow: 0 0 12px rgba(48, 170, 15, 0.8);
+}
+
+/* Fade inactive users */
+body.fade-inactive .user-inactive {
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+body.fade-inactive .user-inactive:hover {
+    opacity: 1;
+}
+
+/* Debug mode indicators */
+body.tracker-debug .mam-class-badge::after {
+    content: " [" attr(data-class) "]";
+    font-size: 10px;
+    color: #ff9e18;
+}
+
+body.tracker-debug .user-group-header::before {
+    content: "🔍 ";
+}
+

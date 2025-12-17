@@ -3,8 +3,8 @@
 		:class="[
 			'user',
 			nickColor(store.state.settings.coloredNicks),
-			{ active: active },
-			displayClass
+			{active: active},
+			displayClass,
 		]"
 		:data-name="user.nick"
 		:data-mam-class="mamClass?.class"
@@ -14,13 +14,76 @@
 		@contextmenu.prevent="openContextMenu"
 	>
 		<slot>{{ mode }}{{ user.nick }}</slot>
-		
-		<!-- Show MAM class icon/badge -->
-		<span v-if="mamClassIcon && mamClassShort" class="mam-class-badge" :title="mamClassName">
-			{{ mamClassIcon }} {{ mamClassShort }}
+
+		<!-- Show MAM class icon/badge (with toggles) -->
+		<span
+			v-if="shouldShowBadge"
+			class="mam-class-badge"
+			:class="{compact: compactBadges}"
+			:title="showClassTooltips ? mamClassName : ''"
+		>
+			<span v-if="!compactBadges && mamClassIcon" class="mam-class-badge-icon">
+				{{ mamClassIcon }}
+			</span>
+			<span class="mam-class-badge-text">{{ mamClassShort }}</span>
 		</span>
 	</span>
 </template>
+
+<style scoped>
+.mam-class-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	font-size: 0.75em;
+	margin-left: 4px;
+	opacity: 0.9;
+	padding: 2px 4px;
+	border-radius: 3px;
+	background: rgba(255, 255, 255, 0.1);
+	transition: opacity 0.2s ease;
+}
+
+.mam-class-badge:hover {
+	opacity: 1;
+}
+
+/* Compact mode */
+.mam-class-badge.compact {
+	font-size: 0.65em;
+	padding: 1px 3px;
+	gap: 0;
+}
+
+.mam-class-badge.compact .mam-class-badge-icon {
+	display: none;
+}
+
+.mam-class-badge-icon {
+	font-size: 1.1em;
+	line-height: 1;
+}
+
+.mam-class-badge-text {
+	font-weight: 600;
+	line-height: 1;
+}
+
+/* Hide badges when disabled via settings */
+body:not(.show-tracker-badges) .mam-class-badge {
+	display: none !important;
+}
+
+/* Compact badges body class */
+body.compact-badges .mam-class-badge {
+	font-size: 0.65em;
+	padding: 1px 3px;
+}
+
+body.compact-badges .mam-class-badge-icon {
+	display: none;
+}
+</style>
 
 <script lang="ts">
 import {computed, defineComponent, PropType} from "vue";
@@ -59,8 +122,25 @@ export default defineComponent({
 	},
 	setup(props) {
 		const store = useStore();
-		
-		// IRC mode detection
+
+		// ============================================
+		// TRACKER SETTINGS
+		// ============================================
+		const trackerFeaturesEnabled = computed(() => store.state.settings.trackerFeaturesEnabled);
+
+		const useOfficialColors = computed(() => store.state.settings.useOfficialColors);
+
+		const showClassBadges = computed(() => store.state.settings.showClassBadges);
+
+		const compactBadges = computed(() => store.state.settings.compactBadges);
+
+		const showClassTooltips = computed(() => store.state.settings.showClassTooltips);
+
+		const enableHostmaskCache = computed(() => store.state.settings.enableHostmaskCache);
+
+		// ============================================
+		// IRC MODE
+		// ============================================
 		const mode = computed(() => {
 			if (props.user.modes) {
 				return props.user.modes[0];
@@ -83,36 +163,50 @@ export default defineComponent({
 			return modeMap[userMode] || "user-mode-normal";
 		});
 
-		// Get hostmask (with caching)
+		// ============================================
+		// HOSTMASK DETECTION
+		// ============================================
 		const getHostmask = computed(() => {
+			// Check if tracker features and cache enabled
+			if (!trackerFeaturesEnabled.value || !enableHostmaskCache.value) {
+				return "";
+			}
+
 			// First check if user object has hostmask (from messages)
 			const directHostmask = (props.user as any).hostmask;
-			
+
 			if (directHostmask) {
 				// Cache it for future use with persistence
 				updateCache(props.user.nick, directHostmask);
 				return directHostmask;
 			}
-			
+
 			// Try to get from cache (from WHOIS or previous messages)
 			const cachedHostmask = hostmaskCache.get(props.user.nick.toLowerCase());
 			if (cachedHostmask) {
 				return cachedHostmask;
 			}
-			
+
 			return "";
 		});
 
-		// MAM class detection
+		// ============================================
+		// MAM CLASS DETECTION
+		// ============================================
 		const mamClass = computed(() => {
+			// Check if tracker features enabled
+			if (!trackerFeaturesEnabled.value) {
+				return null;
+			}
+
 			const hostmask = getHostmask.value;
-			
+
 			if (!hostmask) {
 				return null;
 			}
-			
+
 			// Match pattern: user@CLASS.TYPE.mam
-			// Examples: user@elite.member.mam, user@mod.staff.mam, user@entry.staff.mam
+			// Examples: user@elite.member.mam, user@mod.staff.mam
 			const match = hostmask.match(/@([^.]+)\.([^.]+)\.mam/);
 
 			if (match) {
@@ -128,8 +222,16 @@ export default defineComponent({
 		// MAM class CSS class
 		const mamClassCssClass = computed(() => {
 			if (!mamClass.value) return "";
+
+			// Only apply if official colors enabled
+			if (!useOfficialColors.value) return "";
+
 			return `mam-class-${mamClass.value.class}`;
 		});
+
+		// ============================================
+		// MAM CLASS DISPLAY
+		// ============================================
 
 		// MAM class icons
 		const mamClassIcon = computed(() => {
@@ -221,10 +323,35 @@ export default defineComponent({
 			return shorts[mamClass.value.class] || "";
 		});
 
-		// Display class
+		// ============================================
+		// BADGE VISIBILITY
+		// ============================================
+		const shouldShowBadge = computed(() => {
+			// Must have tracker features enabled
+			if (!trackerFeaturesEnabled.value) return false;
+
+			// Must have badges enabled
+			if (!showClassBadges.value) return false;
+
+			// Must have a MAM class
+			if (!mamClass.value) return false;
+
+			// Must have icon and short text
+			if (!mamClassIcon.value || !mamClassShort.value) return false;
+
+			return true;
+		});
+
+		// ============================================
+		// DISPLAY CLASS
+		// ============================================
 		const displayClass = computed(() => {
 			return `${ircModeClass.value} ${mamClassCssClass.value}`;
 		});
+
+		// ============================================
+		// HELPERS
+		// ============================================
 
 		// nickColor as function
 		const nickColor = (enabled: boolean) => {
@@ -254,6 +381,9 @@ export default defineComponent({
 			mamClassShort,
 			mamClassName,
 			mamClass,
+			shouldShowBadge,
+			compactBadges,
+			showClassTooltips,
 			nickColor,
 			hover,
 			openContextMenu,
@@ -262,11 +392,3 @@ export default defineComponent({
 	},
 });
 </script>
-
-<style scoped>
-.mam-class-badge {
-	font-size: 0.75em;
-	margin-left: 4px;
-	opacity: 0.9;
-}
-</style>

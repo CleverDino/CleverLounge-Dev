@@ -12,7 +12,6 @@ const defaultConfig = {
 		default: true,
 		sync: "never",
 		apply(store: TypedStore, value: boolean, auto = false) {
-			// If applied by settings/applyAll, do not emit to server
 			if (value && !auto) {
 				socket.emit("setting:get");
 			}
@@ -34,15 +33,12 @@ const defaultConfig = {
 		default: false,
 		sync: "never",
 		apply(store: TypedStore, value: boolean) {
-			// Commit a mutation. options can have root: true that allows to commit root mutations in namespaced modules.
-			// https://vuex.vuejs.org/api/#store-instance-methods. not typed?
 			store.commit("refreshDesktopNotificationState", null, {root: true});
 
 			if ("Notification" in window && value && Notification.permission !== "granted") {
 				Notification.requestPermission(() =>
 					store.commit("refreshDesktopNotificationState", null, {root: true})
 				).catch((e) => {
-					// eslint-disable-next-line no-console
 					console.error(e);
 				});
 			}
@@ -145,6 +141,239 @@ const defaultConfig = {
 	searchEnabled: {
 		default: false,
 	},
+
+	// ============================================
+	// TRACKER FEATURES (CleverLounge)
+	// ============================================
+
+	// Master toggle
+	trackerFeaturesEnabled: {
+		default: true,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			// Trigger component re-render
+			window.dispatchEvent(new Event("resize"));
+		},
+	},
+
+	// Userlist Grouping
+	enableClassGrouping: {
+		default: true,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			window.dispatchEvent(new Event("resize"));
+		},
+	},
+
+	// Queue Detection
+	enableQueueDetection: {
+		default: true,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			window.dispatchEvent(new Event("resize"));
+		},
+	},
+
+	// Visual Styling
+	useOfficialColors: {
+		default: true,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			// Toggle CSS classes on body
+			if (value) {
+				document.body.classList.add("tracker-official-colors");
+			} else {
+				document.body.classList.remove("tracker-official-colors");
+			}
+		},
+	},
+
+	showClassBadges: {
+		default: true,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			if (value) {
+				document.body.classList.add("show-tracker-badges");
+			} else {
+				document.body.classList.remove("show-tracker-badges");
+			}
+		},
+	},
+
+	stickyGroupHeaders: {
+		default: true,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			if (value) {
+				document.body.classList.add("sticky-userlist-headers");
+			} else {
+				document.body.classList.remove("sticky-userlist-headers");
+			}
+		},
+	},
+
+	// Visual Effects
+	animateQueue: {
+		default: false,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			if (value) {
+				document.body.classList.add("animate-queue");
+			} else {
+				document.body.classList.remove("animate-queue");
+			}
+		},
+	},
+
+	staffGlowEffect: {
+		default: false,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			if (value) {
+				document.body.classList.add("staff-glow");
+			} else {
+				document.body.classList.remove("staff-glow");
+			}
+		},
+	},
+
+	compactBadges: {
+		default: false,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			if (value) {
+				document.body.classList.add("compact-badges");
+			} else {
+				document.body.classList.remove("compact-badges");
+			}
+		},
+	},
+
+	showClassTooltips: {
+		default: true,
+		sync: "always",
+	},
+
+	fadeInactiveUsers: {
+		default: false,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			if (value) {
+				document.body.classList.add("fade-inactive");
+			} else {
+				document.body.classList.remove("fade-inactive");
+			}
+		},
+	},
+
+	// Behavioral Features
+	autoExpandQueue: {
+		default: true,
+		sync: "always",
+	},
+
+	sortQueueByTime: {
+		default: false,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			window.dispatchEvent(new Event("resize"));
+		},
+	},
+
+	playQueueSound: {
+		default: false,
+		sync: "always",
+	},
+
+	notifyStaffJoin: {
+		default: false,
+		sync: "never", // Don't sync notification preferences
+		apply(store: TypedStore, value: boolean) {
+			if (value && "Notification" in window && Notification.permission !== "granted") {
+				Notification.requestPermission().catch((e) => {
+					console.error("Notification permission error:", e);
+				});
+			}
+		},
+	},
+
+	// Data Display
+	showWaitTime: {
+		default: false,
+		sync: "always",
+	},
+
+	showUserCount: {
+		default: true,
+		sync: "always",
+	},
+
+	showJoinDate: {
+		default: false,
+		sync: "always",
+	},
+
+	showLastSeen: {
+		default: false,
+		sync: "always",
+	},
+
+	// Data Management
+	enableHostmaskCache: {
+		default: true,
+		sync: "never", // Cache is local-only
+		apply(store: TypedStore, value: boolean) {
+			if (!value) {
+				// Clear cache if disabled
+				localStorage.removeItem("hostmaskCache");
+				window.dispatchEvent(new Event("resize"));
+			}
+		},
+	},
+
+	autoWhois: {
+		default: true,
+		sync: "always",
+	},
+
+	// Advanced Features
+	enableMamApi: {
+		default: false,
+		sync: "always",
+	},
+
+	trackQueueStats: {
+		default: true,
+		sync: "always",
+	},
+
+	debugMode: {
+		default: false,
+		sync: "never",
+		apply(store: TypedStore, value: boolean) {
+			if (value) {
+				document.body.classList.add("tracker-debug");
+				console.log("🐭 CleverLounge Debug Mode Enabled");
+			} else {
+				document.body.classList.remove("tracker-debug");
+			}
+		},
+	},
+
+	// Enabled Trackers (stored as JSON string)
+	enabledTrackers: {
+		default: JSON.stringify(["mam"]),
+		sync: "always",
+		apply(store: TypedStore, value: string) {
+			try {
+				const trackers = JSON.parse(value);
+				console.log("🐭 Enabled trackers:", trackers);
+				window.dispatchEvent(new Event("resize"));
+			} catch (e) {
+				console.error("Invalid tracker configuration:", e);
+			}
+		},
+	},
 };
 
 export const config = normalizeConfig(defaultConfig);
@@ -169,7 +398,6 @@ function normalizeConfig(obj: any) {
 	return newConfig as typeof defaultConfig;
 }
 
-// flatten to type of default
 export type SettingsState = {
 	[key in keyof typeof defaultConfig]: typeof defaultConfig[key]["default"];
 };
