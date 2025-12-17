@@ -3114,15 +3114,15 @@ part/quit messages where we don't load previews (adds a blank line otherwise) */
 
 /* Users WITHOUT MAM class use normal IRC usermode colors */
 #chat .names .user.user-mode-owner:not([class*="mam-class-"]) {
-	color: #e91e63 !important;
+	color: #e91e63;
 }
 
 #chat .names .user.user-mode-admin:not([class*="mam-class-"]) {
-	color: #ff5722 !important;
+	color: #ff5722;
 }
 
 #chat .names .user.user-mode-op:not([class*="mam-class-"]) {
-	color: #4caf50 !important;
+	color: #4caf50;
 }
 
 #chat .names .user.user-mode-half-op:not([class*="mam-class-"]) {
@@ -3130,11 +3130,11 @@ part/quit messages where we don't load previews (adds a blank line otherwise) */
 }
 
 #chat .names .user.user-mode-voice:not([class*="mam-class-"]) {
-	color: #9c27b0 !important;
+	color: #9c27b0;
 }
 
 #chat .names .user.user-mode-normal:not([class*="mam-class-"]) {
-	color: var(--body-color) !important;
+	color: var(--body-color);
 }
 
 /* ==================== END MAM STYLING ==================== */
@@ -3334,7 +3334,7 @@ part/quit messages where we don't load previews (adds a blank line otherwise) */
 .flag-founder { color: gold !important; }
 .flag-admin { color: violet !important; }
 .flag-op { color: red !important; }
-.flag-voice { color: cornflowerblue !important; }
+.flag-voice { color: blue !important; }.
 
 /* ============================================
    MAM Class Colors - Exact from Website

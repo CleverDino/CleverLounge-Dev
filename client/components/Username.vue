@@ -83,6 +83,83 @@ body.compact-badges .mam-class-badge {
 body.compact-badges .mam-class-badge-icon {
 	display: none;
 }
+
+/* ============================================
+   IRC MODE COLORS (ALWAYS ACTIVE)
+   ============================================ */
+
+/* Owner (~) - Gold */
+.user-mode-owner {
+	color: gold;
+}
+
+/* Admin (&) - Violet */
+.user-mode-admin {
+	color: violet;
+}
+
+/* Op (@) - Red */
+.user-mode-op {
+	color: red;
+}
+
+/* Half-Op (%) - Orange */
+.user-mode-half-op {
+	color: orange;
+}
+
+/* Voice (+) - Blue */
+.user-mode-voice {
+	color: blue;
+}
+
+/* Normal users - Default */
+.user-mode-normal {
+	color: inherit;
+}
+
+/* ============================================
+   MAM CLASS COLORS (ONLY WHEN ENABLED)
+   ============================================ */
+
+/* Only apply MAM colors when official colors setting is enabled */
+body.tracker-official-colors .mam-class-dev,
+body.tracker-official-colors .mam-class-sysop,
+body.tracker-official-colors .mam-class-sr-admin,
+body.tracker-official-colors .mam-class-admin {
+	color: #e74c3c !important; /* Staff Red */
+}
+
+body.tracker-official-colors .mam-class-sr-mod,
+body.tracker-official-colors .mam-class-mod,
+body.tracker-official-colors .mam-class-t-mod,
+body.tracker-official-colors .mam-class-f-mod {
+	color: #9b59b6 !important; /* Moderator Purple */
+}
+
+body.tracker-official-colors .mam-class-elite {
+	color: #f1c40f !important; /* Elite Gold */
+}
+
+body.tracker-official-colors .mam-class-vip,
+body.tracker-official-colors .mam-class-e-vip {
+	color: #1abc9c !important; /* VIP Teal */
+}
+
+body.tracker-official-colors .mam-class-p-user {
+	color: #3498db !important; /* Power User Blue */
+}
+
+body.tracker-official-colors .mam-class-supporter,
+body.tracker-official-colors .mam-class-mouseketeer,
+body.tracker-official-colors .mam-class-uploader {
+	color: #e67e22 !important; /* Special Orange */
+}
+
+body.tracker-official-colors .mam-class-user,
+body.tracker-official-colors .mam-class-mouse {
+	color: #95a5a6 !important; /* Regular User Gray */
+}
 </style>
 
 <script lang="ts">
@@ -264,9 +341,8 @@ export default defineComponent({
 		const mamClassCssClass = computed(() => {
 			if (!mamClass.value) return "";
 
-			// Only apply if official colors enabled
-			if (!useOfficialColors.value) return "";
-
+			// ✅ FIXED: Always apply MAM class (for layout/targeting)
+			// But colors only apply if useOfficialColors is true (via CSS)
 			return `mam-class-${mamClass.value.class}`;
 		});
 
