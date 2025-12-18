@@ -31,6 +31,9 @@
 </template>
 
 <style scoped>
+/* ============================================
+   MAM CLASS BADGES
+   ============================================ */
 .mam-class-badge {
 	display: inline-flex;
 	align-items: center;
@@ -48,7 +51,6 @@
 	opacity: 1;
 }
 
-/* Compact mode */
 .mam-class-badge.compact {
 	font-size: 0.65em;
 	padding: 1px 3px;
@@ -69,12 +71,12 @@
 	line-height: 1;
 }
 
-/* Hide badges when disabled via settings */
+/* Hide badges when global toggle is off */
 body:not(.show-tracker-badges) .mam-class-badge {
 	display: none !important;
 }
 
-/* Compact badges body class */
+/* Apply compact style when global toggle is on */
 body.compact-badges .mam-class-badge {
 	font-size: 0.65em;
 	padding: 1px 3px;
@@ -82,83 +84,6 @@ body.compact-badges .mam-class-badge {
 
 body.compact-badges .mam-class-badge-icon {
 	display: none;
-}
-
-/* ============================================
-   IRC MODE COLORS (ALWAYS ACTIVE)
-   ============================================ */
-
-/* Owner (~) - Gold */
-.user-mode-owner {
-	color: gold;
-}
-
-/* Admin (&) - Violet */
-.user-mode-admin {
-	color: violet;
-}
-
-/* Op (@) - Red */
-.user-mode-op {
-	color: red;
-}
-
-/* Half-Op (%) - Orange */
-.user-mode-half-op {
-	color: orange;
-}
-
-/* Voice (+) - Blue */
-.user-mode-voice {
-	color: blue;
-}
-
-/* Normal users - Default */
-.user-mode-normal {
-	color: inherit;
-}
-
-/* ============================================
-   MAM CLASS COLORS (ONLY WHEN ENABLED)
-   ============================================ */
-
-/* Only apply MAM colors when official colors setting is enabled */
-body.tracker-official-colors .mam-class-dev,
-body.tracker-official-colors .mam-class-sysop,
-body.tracker-official-colors .mam-class-sr-admin,
-body.tracker-official-colors .mam-class-admin {
-	color: #e74c3c !important; /* Staff Red */
-}
-
-body.tracker-official-colors .mam-class-sr-mod,
-body.tracker-official-colors .mam-class-mod,
-body.tracker-official-colors .mam-class-t-mod,
-body.tracker-official-colors .mam-class-f-mod {
-	color: #9b59b6 !important; /* Moderator Purple */
-}
-
-body.tracker-official-colors .mam-class-elite {
-	color: #f1c40f !important; /* Elite Gold */
-}
-
-body.tracker-official-colors .mam-class-vip,
-body.tracker-official-colors .mam-class-e-vip {
-	color: #1abc9c !important; /* VIP Teal */
-}
-
-body.tracker-official-colors .mam-class-p-user {
-	color: #3498db !important; /* Power User Blue */
-}
-
-body.tracker-official-colors .mam-class-supporter,
-body.tracker-official-colors .mam-class-mouseketeer,
-body.tracker-official-colors .mam-class-uploader {
-	color: #e67e22 !important; /* Special Orange */
-}
-
-body.tracker-official-colors .mam-class-user,
-body.tracker-official-colors .mam-class-mouse {
-	color: #95a5a6 !important; /* Regular User Gray */
 }
 </style>
 
@@ -218,17 +143,13 @@ export default defineComponent({
 		// TRACKER SETTINGS
 		// ============================================
 		const trackerFeaturesEnabled = computed(() => store.state.settings.trackerFeaturesEnabled);
-
+		const colorIRCModes = computed(() => store.state.settings.colorIRCModes);
 		const useOfficialColors = computed(() => store.state.settings.useOfficialColors);
-
+		const useBackgroundColors = computed(() => store.state.settings.useBackgroundColors);
 		const showClassBadges = computed(() => store.state.settings.showClassBadges);
-
 		const compactBadges = computed(() => store.state.settings.compactBadges);
-
 		const showClassTooltips = computed(() => store.state.settings.showClassTooltips);
-
 		const enableHostmaskCache = computed(() => store.state.settings.enableHostmaskCache);
-
 		const forceMAMFormatting = computed(() => store.state.settings.forceMAMFormatting);
 
 		// ============================================
@@ -241,8 +162,13 @@ export default defineComponent({
 			return props.user.mode;
 		});
 
-		// IRC role class
+		// IRC role class (only applied when colorIRCModes is enabled)
 		const ircModeClass = computed(() => {
+			// Don't apply IRC mode colors if disabled
+			if (!colorIRCModes.value) {
+				return "";
+			}
+
 			const userMode = mode.value;
 			if (!userMode) return "user-mode-normal";
 
@@ -260,8 +186,7 @@ export default defineComponent({
 		// HOSTMASK DETECTION
 		// ============================================
 		const getHostmask = computed(() => {
-			// ✅ REMOVED NETWORK CHECK - Allow hostmask retrieval on all networks when force is enabled
-			// Only check if tracker features and cache enabled
+			// Check if tracker features and cache enabled
 			if (!trackerFeaturesEnabled.value || !enableHostmaskCache.value) {
 				return "";
 			}
@@ -288,7 +213,7 @@ export default defineComponent({
 		// MAM CLASS DETECTION
 		// ============================================
 		const mamClass = computed(() => {
-			// ✅ Check if tracker features enabled first
+			// Check if tracker features enabled
 			if (!trackerFeaturesEnabled.value) {
 				return null;
 			}
@@ -299,7 +224,7 @@ export default defineComponent({
 				return null;
 			}
 
-			// ✅ UPDATED: Try MAM pattern first
+			// Try MAM pattern first
 			// Match pattern: user@CLASS.TYPE.mam
 			const mamMatch = hostmask.match(/@([^.]+)\.([^.]+)\.mam/);
 
@@ -310,39 +235,60 @@ export default defineComponent({
 				};
 			}
 
-			// ✅ NEW: If force formatting is enabled and no .mam pattern found,
-			// try to extract class from any hostmask pattern
+			// If force formatting is enabled, try generic patterns
 			if (forceMAMFormatting.value) {
 				// Try pattern: user@CLASS.TYPE.anything
 				const genericMatch = hostmask.match(/@([^.]+)\.([^.]+)\./);
 
 				if (genericMatch) {
-					return {
-						class: genericMatch[1],
-						type: genericMatch[2],
-					};
+					const extractedClass = genericMatch[1];
+
+					// Filter out IRC server names
+					if (
+						!/^[A-Z0-9-]{5,}$/.test(extractedClass) &&
+						!extractedClass.startsWith("AHIP-") &&
+						extractedClass !== "SERVICES"
+					) {
+						return {
+							class: extractedClass,
+							type: genericMatch[2],
+						};
+					}
 				}
 
 				// Try pattern: user@CLASS.anything (no type)
 				const simpleMatch = hostmask.match(/@([^.@]+)\./);
 
 				if (simpleMatch) {
-					return {
-						class: simpleMatch[1],
-						type: "member", // Default type
-					};
+					const extractedClass = simpleMatch[1];
+
+					// Filter out IRC server names
+					if (
+						!/^[A-Z0-9-]{5,}$/.test(extractedClass) &&
+						!extractedClass.startsWith("AHIP-") &&
+						extractedClass !== "SERVICES"
+					) {
+						return {
+							class: extractedClass,
+							type: "member",
+						};
+					}
 				}
 			}
 
 			return null;
 		});
 
-		// MAM class CSS class
+		// MAM class CSS class (only applied when useOfficialColors OR useBackgroundColors is enabled)
 		const mamClassCssClass = computed(() => {
+			// Don't apply MAM class if both color systems are disabled
+			if (!useOfficialColors.value && !useBackgroundColors.value) {
+				return "";
+			}
+
 			if (!mamClass.value) return "";
 
-			// ✅ FIXED: Always apply MAM class (for layout/targeting)
-			// But colors only apply if useOfficialColors is true (via CSS)
+			// Return the class name (colors controlled by CSS based on body classes)
 			return `mam-class-${mamClass.value.class}`;
 		});
 
@@ -463,7 +409,12 @@ export default defineComponent({
 		// DISPLAY CLASS
 		// ============================================
 		const displayClass = computed(() => {
-			return `${ircModeClass.value} ${mamClassCssClass.value}`;
+			// Combine IRC mode class + MAM class
+			// CSS will handle which colors to apply based on body classes:
+			// - body.color-irc-modes → IRC mode colors
+			// - body.tracker-official-colors → MAM text colors
+			// - body.tracker-background-colors → MAM background colors
+			return `${ircModeClass.value} ${mamClassCssClass.value}`.trim();
 		});
 
 		// ============================================

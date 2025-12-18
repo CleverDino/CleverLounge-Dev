@@ -156,7 +156,7 @@ const defaultConfig = {
 		},
 	},
 
-	// ✅ NEW: Force MAM formatting on all networks
+	// Force MAM formatting on all networks
 	forceMAMFormatting: {
 		default: false,
 		sync: "always",
@@ -184,6 +184,19 @@ const defaultConfig = {
 		},
 	},
 
+	// ✅ NEW: Separate IRC mode coloring from MAM coloring
+	colorIRCModes: {
+		default: true,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			if (value) {
+				document.body.classList.add("color-irc-modes");
+			} else {
+				document.body.classList.remove("color-irc-modes");
+			}
+		},
+	},
+
 	// Visual Styling
 	useOfficialColors: {
 		default: true,
@@ -194,6 +207,19 @@ const defaultConfig = {
 				document.body.classList.add("tracker-official-colors");
 			} else {
 				document.body.classList.remove("tracker-official-colors");
+			}
+		},
+	},
+
+	// ✅ NEW: Background color style (bold/highlighted)
+	useBackgroundColors: {
+		default: false,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			if (value) {
+				document.body.classList.add("tracker-background-colors");
+			} else {
+				document.body.classList.remove("tracker-background-colors");
 			}
 		},
 	},

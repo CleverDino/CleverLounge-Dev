@@ -356,7 +356,7 @@ const storePattern = {
 	getters,
 };
 
-// https://vuex.vuejs.org/guide/typescript-support.html#typing-usestore-composition-function
+// [https://vuex.vuejs.org/guide/typescript-support.html#typing-usestore-composition-function](https://vuex.vuejs.org/guide/typescript-support.html#typing-usestore-composition-function)
 export const key: InjectionKey<Store<State>> = Symbol();
 
 // vuex types getters as any
@@ -375,6 +375,97 @@ const settingsStore = createSettingsStore(store);
 // Settings module is registered dynamically because it benefits
 // from a direct reference to the store
 store.registerModule("settings", settingsStore);
+
+// ============================================
+// ✅ INITIALIZE BODY CLASSES ON APP LOAD
+// ============================================
+// Apply all settings that affect body element classes
+// This ensures settings are properly applied on page load
+function initializeBodyClasses() {
+	const settings = store.state.settings;
+
+	// Color IRC modes
+	if (settings.colorIRCModes) {
+		document.body.classList.add("color-irc-modes");
+	}
+
+	// Use official MAM colors
+	if (settings.useOfficialColors) {
+		document.body.classList.add("tracker-official-colors");
+	}
+
+	// Show class badges
+	if (settings.showClassBadges) {
+		document.body.classList.add("show-tracker-badges");
+	}
+
+	// Sticky group headers
+	if (settings.stickyGroupHeaders) {
+		document.body.classList.add("sticky-userlist-headers");
+	}
+
+	// Staff glow effect
+	if (settings.staffGlowEffect) {
+		document.body.classList.add("staff-glow");
+	}
+
+	// Compact badges
+	if (settings.compactBadges) {
+		document.body.classList.add("compact-badges");
+	}
+
+	// Fade inactive users
+	if (settings.fadeInactiveUsers) {
+		document.body.classList.add("fade-inactive");
+	}
+
+	// Animate queue
+	if (settings.animateQueue) {
+		document.body.classList.add("animate-queue");
+	}
+
+	// Readable mode messages
+	if (settings.readableModeMessages) {
+		document.body.classList.add("readable-mode-messages");
+	}
+
+	// Colored mode messages
+	if (settings.coloredModeMessages) {
+		document.body.classList.add("colored-mode-messages");
+	}
+
+	// Compact user modes
+	if (settings.compactUserModes) {
+		document.body.classList.add("compact-user-modes");
+	}
+
+	// Compact queue messages
+	if (settings.compactQueueMessages) {
+		document.body.classList.add("compact-queue-messages");
+	}
+
+	// Compact join/quit
+	if (settings.compactJoinQuit) {
+		document.body.classList.add("compact-join-quit");
+	}
+
+	// Show badges in messages
+	if (settings.showBadgesInMessages) {
+		document.body.classList.add("badges-in-messages");
+	}
+
+	// Debug mode
+	if (settings.debugMode) {
+		document.body.classList.add("tracker-debug");
+		console.log("🐭 CleverLounge Debug Mode Enabled");
+	}
+}
+
+// Run initialization after settings are loaded
+// Use setTimeout to ensure settings are fully loaded
+setTimeout(() => {
+	initializeBodyClasses();
+}, 0);
 
 export function useStore() {
 	return baseUseStore(key) as TypedStore;
