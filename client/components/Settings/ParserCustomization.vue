@@ -12,6 +12,7 @@
 					type="checkbox"
 					name="customParserEnabled"
 					:checked="settings.customParserEnabled"
+					@change="onChange"
 				/>
 				Enable custom message parser
 			</label>
@@ -27,6 +28,7 @@
 					type="checkbox"
 					name="readableModeMessages"
 					:checked="settings.readableModeMessages"
+					@change="onChange"
 				/>
 				Use readable mode messages
 			</label>
@@ -38,6 +40,7 @@
 					name="coloredModeMessages"
 					:checked="settings.coloredModeMessages"
 					:disabled="!settings.readableModeMessages"
+					@change="onChange"
 				/>
 				Colored mode messages
 			</label>
@@ -49,6 +52,7 @@
 					name="showModeSymbols"
 					:checked="settings.showModeSymbols"
 					:disabled="!settings.readableModeMessages"
+					@change="onChange"
 				/>
 				Show mode symbols alongside text
 			</label>
@@ -63,6 +67,7 @@
 					name="showVoiceMode"
 					:checked="settings.showVoiceMode"
 					:disabled="!settings.readableModeMessages"
+					@change="onChange"
 				/>
 				Show voice (+v) mode changes
 			</label>
@@ -73,6 +78,7 @@
 					name="showOpMode"
 					:checked="settings.showOpMode"
 					:disabled="!settings.readableModeMessages"
+					@change="onChange"
 				/>
 				Show op (@) mode changes
 			</label>
@@ -83,6 +89,7 @@
 					name="showHalfOpMode"
 					:checked="settings.showHalfOpMode"
 					:disabled="!settings.readableModeMessages"
+					@change="onChange"
 				/>
 				Show half-op (%) mode changes
 			</label>
@@ -93,6 +100,7 @@
 					name="showOwnerMode"
 					:checked="settings.showOwnerMode"
 					:disabled="!settings.readableModeMessages"
+					@change="onChange"
 				/>
 				Show owner (~) mode changes
 			</label>
@@ -103,6 +111,7 @@
 					name="showAdminMode"
 					:checked="settings.showAdminMode"
 					:disabled="!settings.readableModeMessages"
+					@change="onChange"
 				/>
 				Show admin (&) mode changes
 			</label>
@@ -116,6 +125,7 @@
 					name="compactUserModes"
 					:checked="settings.compactUserModes"
 					:disabled="!settings.readableModeMessages"
+					@change="onChange"
 				/>
 				Compact user mode messages
 			</label>
@@ -130,6 +140,7 @@
 					name="showModeDescriptions"
 					:checked="settings.showModeDescriptions"
 					:disabled="!settings.readableModeMessages || settings.compactUserModes"
+					@change="onChange"
 				/>
 				Show mode descriptions
 			</label>
@@ -144,6 +155,7 @@
 					name="compactQueueMessages"
 					:checked="settings.compactQueueMessages"
 					:disabled="!settings.formatMamQueueText"
+					@change="onChange"
 				/>
 				Compact queue messages
 			</label>
@@ -158,6 +170,7 @@
 					name="compactJoinQuit"
 					:checked="settings.compactJoinQuit"
 					:disabled="!settings.customJoinQuitMessages"
+					@change="onChange"
 				/>
 				Compact join/quit messages
 			</label>
@@ -171,6 +184,7 @@
 					type="checkbox"
 					name="customJoinQuitMessages"
 					:checked="settings.customJoinQuitMessages"
+					@change="onChange"
 				/>
 				Custom join/quit formatting
 			</label>
@@ -182,6 +196,7 @@
 					name="showJoinHostmasks"
 					:checked="settings.showJoinHostmasks"
 					:disabled="!settings.customJoinQuitMessages"
+					@change="onChange"
 				/>
 				Show hostmasks in join messages
 			</label>
@@ -195,6 +210,7 @@
 					type="checkbox"
 					name="highlightTrackerClass"
 					:checked="settings.highlightTrackerClass"
+					@change="onChange"
 				/>
 				Highlight tracker class in messages
 			</label>
@@ -205,6 +221,7 @@
 					type="checkbox"
 					name="showBadgesInMessages"
 					:checked="settings.showBadgesInMessages"
+					@change="onChange"
 				/>
 				Show class badges in messages
 			</label>
@@ -220,6 +237,7 @@
 					type="checkbox"
 					name="formatQueueMessages"
 					:checked="settings.formatQueueMessages"
+					@change="onChange"
 				/>
 				Format MouseBot queue messages
 			</label>
@@ -233,6 +251,7 @@
 					type="checkbox"
 					name="formatFlagsListing"
 					:checked="settings.formatFlagsListing"
+					@change="onChange"
 				/>
 				Format MineBot FLAGS listings
 			</label>
@@ -249,6 +268,7 @@
 					type="checkbox"
 					name="formatMamQueueText"
 					:checked="settings.formatMamQueueText"
+					@change="onChange"
 				/>
 				Format MAM queue text
 			</label>
@@ -502,8 +522,21 @@ export default defineComponent({
 		const store = useStore();
 		const settings = computed(() => store.state.settings);
 
+		const onChange = (event: Event) => {
+			const target = event.target as HTMLInputElement;
+			const name = target.name;
+			const value = target.checked;
+
+			store.dispatch("settings/update", {
+				name,
+				value,
+				sync: false,
+			});
+		};
+
 		return {
 			settings,
+			onChange,
 		};
 	},
 });

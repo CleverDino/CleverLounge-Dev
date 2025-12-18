@@ -158,16 +158,6 @@ const defaultConfig = {
 		},
 	},
 
-	// Force MAM formatting on all networks
-	forceMAMFormatting: {
-		default: false,
-		sync: "always",
-		apply(store: TypedStore, value: boolean) {
-			// Trigger component re-render
-			window.dispatchEvent(new Event("resize"));
-		},
-	},
-
 	// Userlist Grouping
 	enableClassGrouping: {
 		default: true,
@@ -396,6 +386,15 @@ const defaultConfig = {
 		},
 	},
 
+	// Force MAM formatting on all networks
+	forceMAMFormatting: {
+		default: false,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			window.dispatchEvent(new Event("resize"));
+		},
+	},
+
 	// Enabled Trackers (stored as JSON string)
 	enabledTrackers: {
 		default: JSON.stringify(["mam"]),
@@ -493,6 +492,46 @@ const defaultConfig = {
 		sync: "always",
 	},
 
+	showModeDescriptions: {
+		default: true,
+		sync: "always",
+	},
+
+	// MAM Queue-specific formatting
+	formatMamQueueText: {
+		default: true,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			window.dispatchEvent(new Event("resize"));
+		},
+	},
+
+	// Compact queue messages (+v/-v in #help and #anonamouse.net)
+	compactQueueMessages: {
+		default: false,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			if (value) {
+				document.body.classList.add("compact-queue-messages");
+			} else {
+				document.body.classList.remove("compact-queue-messages");
+			}
+		},
+	},
+
+	// Compact user mode messages (shorter format)
+	compactUserModes: {
+		default: false,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			if (value) {
+				document.body.classList.add("compact-user-modes");
+			} else {
+				document.body.classList.remove("compact-user-modes");
+			}
+		},
+	},
+
 	// Custom join/part/quit formatting
 	customJoinQuitMessages: {
 		default: true,
@@ -532,6 +571,23 @@ const defaultConfig = {
 			} else {
 				document.body.classList.remove("badges-in-messages");
 			}
+		},
+	},
+
+	// Bot message formatting
+	formatQueueMessages: {
+		default: true,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			window.dispatchEvent(new Event("resize"));
+		},
+	},
+
+	formatFlagsListing: {
+		default: true,
+		sync: "always",
+		apply(store: TypedStore, value: boolean) {
+			window.dispatchEvent(new Event("resize"));
 		},
 	},
 };

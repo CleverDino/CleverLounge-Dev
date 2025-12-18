@@ -384,17 +384,12 @@ store.registerModule("settings", settingsStore);
 function initializeBodyClasses() {
 	const settings = store.state.settings;
 
-	// Color IRC modes - COMMENTED OUT (setting doesn't exist)
-	// if (settings.colorIRCModes) {
-	//     document.body.classList.add("color-irc-modes");
-	// }
-
 	// Use official MAM colors
 	if (settings.useOfficialColors) {
 		document.body.classList.add("tracker-official-colors");
 	}
 
-	// Use text colors (NEW)
+	// Use text colors
 	if (settings.useTextColors) {
 		document.body.classList.add("tracker-text-colors");
 	}
@@ -444,15 +439,15 @@ function initializeBodyClasses() {
 		document.body.classList.add("colored-mode-messages");
 	}
 
-	// Compact user modes - COMMENTED OUT (setting doesn't exist)
-	// if (settings.compactUserModes) {
-	//     document.body.classList.add("compact-user-modes");
-	// }
+	// Compact user modes (NOW UNCOMMENTED - setting exists!)
+	if (settings.compactUserModes) {
+		document.body.classList.add("compact-user-modes");
+	}
 
-	// Compact queue messages - COMMENTED OUT (setting doesn't exist)
-	// if (settings.compactQueueMessages) {
-	//     document.body.classList.add("compact-queue-messages");
-	// }
+	// Compact queue messages (NOW UNCOMMENTED - setting exists!)
+	if (settings.compactQueueMessages) {
+		document.body.classList.add("compact-queue-messages");
+	}
 
 	// Compact mode messages (this one exists)
 	if (settings.compactModeMessages) {
