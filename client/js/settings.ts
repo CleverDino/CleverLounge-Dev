@@ -177,19 +177,6 @@ const defaultConfig = {
 	},
 
 	// Visual Styling
-	useOfficialColors: {
-		default: true,
-		sync: "always" as const,
-		apply(store: TypedStore, value: boolean) {
-			// Toggle CSS classes on body
-			if (value) {
-				document.body.classList.add("tracker-official-colors");
-			} else {
-				document.body.classList.remove("tracker-official-colors");
-			}
-		},
-	},
-
 	useTextColors: {
 		default: true,
 		sync: "always" as const,

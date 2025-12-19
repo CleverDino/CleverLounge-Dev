@@ -83,22 +83,6 @@
 			<label class="opt">
 				<input
 					type="checkbox"
-					name="useOfficialColors"
-					:checked="settings.useOfficialColors"
-					@change="
-						$emit('change', {name: 'useOfficialColors', value: $event.target.checked})
-					"
-				/>
-				Use official MAM colors
-			</label>
-			<p class="settings-help">
-				Apply official MAM class colors - simple text style. Staff: Red, Mods: Purple,
-				Elite: Gold, VIP: Teal
-			</p>
-
-			<label class="opt">
-				<input
-					type="checkbox"
 					name="useTextColors"
 					:checked="settings.useTextColors"
 					@change="$emit('change', {name: 'useTextColors', value: $event.target.checked})"

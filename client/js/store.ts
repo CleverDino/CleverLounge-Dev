@@ -384,11 +384,6 @@ store.registerModule("settings", settingsStore);
 function initializeBodyClasses() {
 	const settings = store.state.settings;
 
-	// Use official MAM colors
-	if (settings.useOfficialColors) {
-		document.body.classList.add("tracker-official-colors");
-	}
-
 	// Use text colors
 	if (settings.useTextColors) {
 		document.body.classList.add("tracker-text-colors");
