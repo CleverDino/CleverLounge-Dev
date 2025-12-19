@@ -65,28 +65,6 @@
 	</aside>
 </template>
 
-<style scoped>
-.user-group-header {
-	padding: 4px 8px;
-	margin-top: 8px;
-	font-weight: bold;
-	font-size: 11px;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-	background: rgba(255, 255, 255, 0.05);
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	color: rgba(255, 255, 255, 0.7);
-	position: sticky;
-	top: 0;
-	z-index: 1;
-}
-
-/* First group shouldn't have top margin */
-.user-mode:first-child .user-group-header {
-	margin-top: 0;
-}
-</style>
-
 <script lang="ts">
 import {filter as fuzzyFilter} from "fuzzy";
 import {computed, defineComponent, nextTick, PropType, ref} from "vue";
@@ -210,10 +188,14 @@ export default defineComponent({
 				return true; // Treat all networks as MAM
 			}
 
-			// Normal detection: check if network name contains "mam" or "myanonamouse"
-			const network = props.channel.network;
-			const networkName = network?.name?.toLowerCase() || "";
-			return networkName.includes("myanonamouse") || networkName.includes("mam");
+			// Normal detection: check if channel name contains the name of a MAM channel name
+			const channelname = props.channel.name.toLowerCase();
+			return (
+				channelname.includes("#am-members") ||
+				channelname.includes("#anonamouse.net") ||
+				channelname.includes("#an-q") ||
+				channelname.includes("#help")
+			);
 		});
 
 		// Access tracker feature settings
