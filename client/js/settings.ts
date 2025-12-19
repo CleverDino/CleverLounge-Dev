@@ -46,15 +46,15 @@ const defaultConfig = {
 	},
 	highlights: {
 		default: "",
-		sync: "always",
+		sync: "always" as const,
 	},
 	highlightExceptions: {
 		default: "",
-		sync: "always",
+		sync: "always" as const,
 	},
 	awayMessage: {
 		default: "",
-		sync: "always",
+		sync: "always" as const,
 	},
 	links: {
 		default: true,
@@ -151,7 +151,7 @@ const defaultConfig = {
 	// Master toggle
 	trackerFeaturesEnabled: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			// Trigger component re-render
 			window.dispatchEvent(new Event("resize"));
@@ -161,7 +161,7 @@ const defaultConfig = {
 	// Userlist Grouping
 	enableClassGrouping: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			window.dispatchEvent(new Event("resize"));
 		},
@@ -170,7 +170,7 @@ const defaultConfig = {
 	// Queue Detection
 	enableQueueDetection: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			window.dispatchEvent(new Event("resize"));
 		},
@@ -179,7 +179,7 @@ const defaultConfig = {
 	// Visual Styling
 	useOfficialColors: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			// Toggle CSS classes on body
 			if (value) {
@@ -192,7 +192,7 @@ const defaultConfig = {
 
 	useTextColors: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			if (value) {
 				document.body.classList.add("tracker-text-colors");
@@ -204,7 +204,7 @@ const defaultConfig = {
 
 	useBackgroundColors: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			if (value) {
 				document.body.classList.add("tracker-background-colors");
@@ -216,7 +216,7 @@ const defaultConfig = {
 
 	showClassBadges: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			if (value) {
 				document.body.classList.add("show-tracker-badges");
@@ -228,7 +228,7 @@ const defaultConfig = {
 
 	stickyGroupHeaders: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			if (value) {
 				document.body.classList.add("sticky-userlist-headers");
@@ -241,7 +241,7 @@ const defaultConfig = {
 	// Visual Effects
 	animateQueue: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			if (value) {
 				document.body.classList.add("animate-queue");
@@ -253,7 +253,7 @@ const defaultConfig = {
 
 	staffGlowEffect: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			if (value) {
 				document.body.classList.add("staff-glow");
@@ -265,7 +265,7 @@ const defaultConfig = {
 
 	compactBadges: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			if (value) {
 				document.body.classList.add("compact-badges");
@@ -277,12 +277,12 @@ const defaultConfig = {
 
 	showClassTooltips: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	fadeInactiveUsers: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			if (value) {
 				document.body.classList.add("fade-inactive");
@@ -295,12 +295,12 @@ const defaultConfig = {
 	// Behavioral Features
 	autoExpandQueue: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	sortQueueByTime: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			window.dispatchEvent(new Event("resize"));
 		},
@@ -308,12 +308,12 @@ const defaultConfig = {
 
 	playQueueSound: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	notifyStaffJoin: {
 		default: false,
-		sync: "never", // Don't sync notification preferences
+		sync: "never" as const, // Don't sync notification preferences
 		apply(store: TypedStore, value: boolean) {
 			if (value && "Notification" in window && Notification.permission !== "granted") {
 				Notification.requestPermission().catch((e) => {
@@ -326,28 +326,28 @@ const defaultConfig = {
 	// Data Display
 	showWaitTime: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	showUserCount: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	showJoinDate: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	showLastSeen: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	// Data Management
 	enableHostmaskCache: {
 		default: true,
-		sync: "never", // Cache is local-only
+		sync: "never" as const, // Cache is local-only
 		apply(store: TypedStore, value: boolean) {
 			if (!value) {
 				// Clear cache if disabled
@@ -359,23 +359,23 @@ const defaultConfig = {
 
 	autoWhois: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	// Advanced Features
 	enableMamApi: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	trackQueueStats: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	debugMode: {
 		default: false,
-		sync: "never",
+		sync: "never" as const,
 		apply(store: TypedStore, value: boolean) {
 			if (value) {
 				document.body.classList.add("tracker-debug");
@@ -389,7 +389,7 @@ const defaultConfig = {
 	// Force MAM formatting on all networks
 	forceMAMFormatting: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			window.dispatchEvent(new Event("resize"));
 		},
@@ -398,7 +398,7 @@ const defaultConfig = {
 	// Enabled Trackers (stored as JSON string)
 	enabledTrackers: {
 		default: JSON.stringify(["mam"]),
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: string) {
 			try {
 				const trackers = JSON.parse(value);
@@ -417,7 +417,7 @@ const defaultConfig = {
 	// Master toggle for parser customizations
 	customParserEnabled: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			window.dispatchEvent(new Event("resize"));
 		},
@@ -426,7 +426,7 @@ const defaultConfig = {
 	// Readable mode messages
 	readableModeMessages: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			if (value) {
 				document.body.classList.add("readable-mode-messages");
@@ -439,33 +439,33 @@ const defaultConfig = {
 	// Show mode changes for specific modes
 	showVoiceMode: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	showOpMode: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	showHalfOpMode: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	showOwnerMode: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	showAdminMode: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	// Mode message styling
 	coloredModeMessages: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			if (value) {
 				document.body.classList.add("colored-mode-messages");
@@ -477,7 +477,7 @@ const defaultConfig = {
 
 	compactModeMessages: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			if (value) {
 				document.body.classList.add("compact-mode-messages");
@@ -489,18 +489,18 @@ const defaultConfig = {
 
 	showModeSymbols: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	showModeDescriptions: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	// MAM Queue-specific formatting
 	formatMamQueueText: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			window.dispatchEvent(new Event("resize"));
 		},
@@ -509,7 +509,7 @@ const defaultConfig = {
 	// Compact queue messages (+v/-v in #help and #anonamouse.net)
 	compactQueueMessages: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			if (value) {
 				document.body.classList.add("compact-queue-messages");
@@ -522,7 +522,7 @@ const defaultConfig = {
 	// Compact user mode messages (shorter format)
 	compactUserModes: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			if (value) {
 				document.body.classList.add("compact-user-modes");
@@ -535,17 +535,17 @@ const defaultConfig = {
 	// Custom join/part/quit formatting
 	customJoinQuitMessages: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	showJoinHostmasks: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	compactJoinQuit: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			if (value) {
 				document.body.classList.add("compact-join-quit");
@@ -558,13 +558,13 @@ const defaultConfig = {
 	// Highlight tracker class in messages
 	highlightTrackerClass: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 	},
 
 	// Show class badges in messages (not just userlist)
 	showBadgesInMessages: {
 		default: false,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			if (value) {
 				document.body.classList.add("badges-in-messages");
@@ -577,7 +577,7 @@ const defaultConfig = {
 	// Bot message formatting
 	formatQueueMessages: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			window.dispatchEvent(new Event("resize"));
 		},
@@ -585,9 +585,34 @@ const defaultConfig = {
 
 	formatFlagsListing: {
 		default: true,
-		sync: "always",
+		sync: "always" as const,
 		apply(store: TypedStore, value: boolean) {
 			window.dispatchEvent(new Event("resize"));
+		},
+	},
+
+	// NEW IRC Mode Color Toggles
+	colorIRCModesChatMessages: {
+		default: false,
+		sync: "always" as const,
+		apply(store: TypedStore, value: boolean) {
+			if (value) {
+				document.body.classList.add("color-irc-modes-chat");
+			} else {
+				document.body.classList.remove("color-irc-modes-chat");
+			}
+		},
+	},
+
+	colorIRCModesUserlist: {
+		default: false,
+		sync: "always" as const,
+		apply(store: TypedStore, value: boolean) {
+			if (value) {
+				document.body.classList.add("color-irc-modes-userlist");
+			} else {
+				document.body.classList.remove("color-irc-modes-userlist");
+			}
 		},
 	},
 };
