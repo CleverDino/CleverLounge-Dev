@@ -384,6 +384,11 @@ store.registerModule("settings", settingsStore);
 function initializeBodyClasses() {
 	const settings = store.state.settings;
 
+	// MAM Class Grouping
+	if (settings.enableClassGrouping) {
+		document.body.classList.add("enable-class-grouping");
+	}
+
 	// Use text colors
 	if (settings.useTextColors) {
 		document.body.classList.add("tracker-text-colors");

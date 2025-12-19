@@ -144,7 +144,7 @@ export default defineComponent({
 		// TRACKER SETTINGS
 		// ============================================
 		const trackerFeaturesEnabled = computed(() => store.state.settings.trackerFeaturesEnabled);
-		const useOfficialColors = computed(() => store.state.settings.useOfficialColors);
+		const useTextColors = computed(() => store.state.settings.useTextColors);
 		const useBackgroundColors = computed(() => store.state.settings.useBackgroundColors);
 		const showClassBadges = computed(() => store.state.settings.showClassBadges);
 		const compactBadges = computed(() => store.state.settings.compactBadges);
@@ -284,10 +284,10 @@ export default defineComponent({
 			return null;
 		});
 
-		// MAM class CSS class (only applied when useOfficialColors OR useBackgroundColors is enabled)
+		// MAM class CSS class (only applied when useTextColors OR useBackgroundColors is enabled)
 		const mamClassCssClass = computed(() => {
 			// Don't apply MAM class if both color systems are disabled
-			if (!useOfficialColors.value && !useBackgroundColors.value) {
+			if (!useTextColors.value && !useBackgroundColors.value) {
 				return "";
 			}
 
