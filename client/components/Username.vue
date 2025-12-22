@@ -95,7 +95,7 @@ import eventbus from "../js/eventbus";
 import colorClass from "../js/helpers/colorClass";
 import type {ClientChan, ClientNetwork} from "../js/types";
 import {useStore} from "../js/store";
-import {hostmaskCache, updateCache} from "../js/hostmaskCache";
+import {hostmaskCache, updateCache} from "../js/hostmaskcache";
 
 type UsernameUser = Partial<UserInMessage> & {
 	mode?: string;
@@ -164,8 +164,11 @@ export default defineComponent({
 		// ============================================
 		const mode = computed(() => {
 			if (props.user.modes) {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 				return props.user.modes[0];
 			}
+
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 			return props.user.mode;
 		});
 
