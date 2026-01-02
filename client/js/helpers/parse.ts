@@ -64,6 +64,38 @@ function getSettings() {
     }
 }
 
+// NEW: Enhance MAM bot commands with readable labels
+function enhanceMAMCommand(text: string): string {
+    const settings = getSettings();
+    
+    // Check if custom parser is enabled
+    if (!settings.customParserEnabled) {
+        return text;
+    }
+    
+    // Trim text for matching but preserve original for replacement
+    const trimmedText = text.trim();
+    
+    // Define MAM command patterns and their labels
+    const mamCommands = [
+        { pattern: /^!inv\b/i, label: '[Requesting invite info]' },
+        { pattern: /^!info\b/i, label: '[Requesting general info]' },
+        { pattern: /^!help\b/i, label: '[Requesting member help]' },
+        { pattern: /^!search\b/i, label: '[Searching torrents]' },
+        { pattern: /^!rules\b/i, label: '[Viewing rules]' }
+    ];
+    
+    // Check each command pattern
+    for (const cmd of mamCommands) {
+        if (cmd.pattern.test(trimmedText)) {
+            // Add label after the command
+            return `${text} ${cmd.label}`;
+        }
+    }
+    
+    return text;
+}
+
 // NEW: Function to detect and clean ZNC playback duplicate usernames
 function cleanZncDuplicates(text: string): string {
     // ZNC playback format: "CleverDino VIP DinoDude VIP @vip.member.mam"
@@ -463,6 +495,9 @@ function parse(
     if (message?.from?.nick === "*buffextras" || text.match(/^\w+\s+(VIP|Mod|Admin)\s+\w+\s+(VIP|Mod|Admin)/i)) {
         processedText = cleanZncDuplicates(text);
     }
+
+    // NEW: Enhance MAM bot commands with labels
+    processedText = enhanceMAMCommand(processedText);
 
     // Apply flag replacement
     processedText = replaceFlagsInText(processedText);
