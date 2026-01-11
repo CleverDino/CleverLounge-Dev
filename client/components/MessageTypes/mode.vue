@@ -82,6 +82,7 @@ export default defineComponent({
 				C: "no CTCPs",
 				S: "SSL only",
 				x: "hidden host",
+				Z: "encrypted connection",
 			};
 
 			// User modes (with target username) - check settings for each
