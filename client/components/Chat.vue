@@ -58,11 +58,8 @@
 						aria-label="Open your mentions"
 						@click="openMentions"
 					/>
-					<button 
-        				class="btn-history" 
-        				aria-label="View History"
-        				@click="showHistory">
-        				📜 View History
+					<button class="btn-history" aria-label="View History" @click="showHistory">
+						📜 View History
 					</button>
 					<button
 						class="menu"
@@ -236,6 +233,13 @@ export default defineComponent({
 			});
 		};
 
+		const showHistory = () => {
+			eventbus.emit("history:show", {
+				network: props.network,
+				channel: props.channel,
+			});
+		};
+
 		watch(
 			() => props.channel,
 			() => {
@@ -274,6 +278,7 @@ export default defineComponent({
 			saveTopic,
 			openContextMenu,
 			openMentions,
+			showHistory,
 		};
 	},
 });
