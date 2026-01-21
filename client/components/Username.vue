@@ -14,9 +14,6 @@
 		@click.prevent="openContextMenu"
 		@contextmenu.prevent="openContextMenu"
 	>
-		<!-- STATUS ICON - Shows online/away/offline status -->
-		<StatusIcon v-if="showStatusIcon && userStatus !== 'offline'" :status="userStatus" />
-
 		<slot>{{ mode }}{{ user.nick }}</slot>
 
 		<!-- Show MAM class icon/badge (with toggles) -->
@@ -99,7 +96,7 @@ import colorClass from "../js/helpers/colorClass";
 import type {ClientChan, ClientNetwork} from "../js/types";
 import {useStore} from "../js/store";
 import {hostmaskCache, updateCache} from "../js/hostmaskcache";
-import StatusIcon from "./StatusIcon.vue";
+import {web} from "webpack";
 
 type UsernameUser = Partial<UserInMessage> & {
 	mode?: string;
@@ -108,9 +105,6 @@ type UsernameUser = Partial<UserInMessage> & {
 
 export default defineComponent({
 	name: "Username",
-	components: {
-		StatusIcon,
-	},
 	props: {
 		user: {
 			type: Object as PropType<UsernameUser | UserInMessage>,
@@ -165,9 +159,6 @@ export default defineComponent({
 		const enableHostmaskCache = computed(() => store.state.settings.enableHostmaskCache);
 		const forceUserModeColors = computed(() => store.state.settings.forceUserModeColors);
 		const forceMAMFormatting = computed(() => store.state.settings.forceMAMFormatting);
-
-		// NEW: Status icon setting
-		const showStatusIcon = computed(() => store.state.settings.showStatusIcons);
 
 		// ============================================
 		// IRC MODE
@@ -450,22 +441,6 @@ export default defineComponent({
 		});
 
 		// ============================================
-		// USER STATUS from MONITOR
-		// ============================================
-		const userStatus = computed(() => {
-			try {
-				const monitorData = (props.user as any)?.monitorStatus;
-				if (monitorData) {
-					if (monitorData.away) return "away";
-					if (monitorData.online) return "online";
-				}
-			} catch (e) {
-				// Silently fail if monitoring data is malformed
-			}
-			return "offline";
-		});
-
-		// ============================================
 		// DISPLAY CLASS
 		// ============================================
 		const displayClass = computed(() => {
@@ -516,9 +491,6 @@ export default defineComponent({
 			hover,
 			openContextMenu,
 			store,
-			// NEW: Status icon support
-			showStatusIcon,
-			userStatus,
 		};
 	},
 });
