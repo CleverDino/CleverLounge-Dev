@@ -446,7 +446,7 @@ export default defineComponent({
 			return filtered;
 		});
 
-		// Refresh all WHOIS data
+		// Refresh all WHOIS data (SAFE RATE-LIMITED VERSION)
 		const refreshAll = async () => {
 			isRefreshing.value = true;
 
@@ -465,17 +465,44 @@ export default defineComponent({
 				return;
 			}
 
-			// Send WHOIS for each user
-			for (const user of allUsers.value) {
+			// Only refresh users that currently have data OR match filters
+			let usersToRefresh = allUsers.value;
+
+			// If "Online only" is checked, only refresh those with existing idle data
+			if (showOnlineOnly.value) {
+				usersToRefresh = usersToRefresh.filter((u) => u.idleSeconds !== null);
+			}
+
+			// If "Staff only" is checked, only refresh staff
+			if (showStaffOnly.value) {
+				usersToRefresh = usersToRefresh.filter((u) => u.mamClass?.type === "staff");
+			}
+
+			const total = usersToRefresh.length;
+			let count = 0;
+
+			console.log(`[Idle Tracker] Refreshing ${total} users...`);
+
+			// Send WHOIS in batches with delays
+			for (const user of usersToRefresh) {
 				socket.emit("input", {
 					target: channelId,
 					text: `/whois ${user.nick}`,
 				});
 
-				// Small delay to avoid flooding (50ms per user)
-				await new Promise((r) => setTimeout(r, 50));
+				count++;
+
+				// Every 10 users, pause for 2 seconds to avoid flood
+				if (count % 10 === 0) {
+					console.log(`[Idle Tracker] ${count}/${total} sent, pausing...`);
+					await new Promise((r) => setTimeout(r, 2000));
+				} else {
+					// Small delay between individual commands
+					await new Promise((r) => setTimeout(r, 200));
+				}
 			}
 
+			console.log(`[Idle Tracker] Complete! Sent ${count} WHOIS commands.`);
 			lastUpdateTime.value = new Date().toLocaleTimeString();
 			countdown.value = refreshRate.value;
 			isRefreshing.value = false;
@@ -522,7 +549,7 @@ export default defineComponent({
 
 		// Auto-refresh logic
 		onMounted(() => {
-			// Initial refresh
+			// Initial refresh after 500ms
 			setTimeout(() => refreshAll(), 500);
 
 			// Set up periodic refresh

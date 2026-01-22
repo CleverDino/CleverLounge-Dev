@@ -106,12 +106,12 @@ const router = createRouter({
 			path: "/chan-:id/search",
 			component: SearchResults,
 		},
-		//{
-		//	name: "IdleStatus",
-		//	path: "/chan-:id/idle-status",
-		//	component: IdleStatus,
-		//	props: true,
-		//},
+		{
+			name: "IdleStatus",
+			path: "/chan-:id/idle-status",
+			component: IdleStatus,
+			props: true,
+		},
 	],
 });
 
