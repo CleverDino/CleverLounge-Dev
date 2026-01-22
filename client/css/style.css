@@ -4630,3 +4630,29 @@ body:not(.show-status-icons) .status-icon {
 .status-icon.status-changed .status-dot {
 	animation: statusPulse 0.5s ease-in-out;
 }
+
+/* Raw IRC / Monospace Block Styling */
+#chat .msg[data-type=monospace_block] .text {
+	font-family: "Courier New", Monaco, monospace;
+	background: #2c2f33;
+	padding: 8px 12px;
+	border-left: 3px solid #7289da;
+	border-radius: 3px;
+	display: block;
+	margin: 4px 0;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	word-break: break-all;
+	color: #b9bbbe;
+}
+
+/* Different colors for server vs client messages */
+#chat .msg[data-type="monospace_block"].self .text {
+	border-left-color: #43b581;
+	/* Green for outgoing */
+}
+
+#chat .msg[data-type="monospace_block"]:not(.self) .text {
+	border-left-color: #faa61a;
+	/* Orange for incoming */
+}

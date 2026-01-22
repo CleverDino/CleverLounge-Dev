@@ -1,4 +1,6 @@
 import _ from "lodash";
+import fs from "fs";
+import path from "path";
 import {IrcEventHandler} from "../../client";
 
 import log from "../../log";
@@ -7,6 +9,26 @@ import Helper from "../../helper";
 import Config from "../../config";
 import {MessageType} from "../../../shared/types/msg";
 import {ChanType, ChanState} from "../../../shared/types/chan";
+
+// Create raw IRC log directory
+const logDir = path.join(Helper.getHomePath(), "logs", "raw-irc");
+
+if (!fs.existsSync(logDir)) {
+	fs.mkdirSync(logDir, {recursive: true});
+}
+
+// Helper function to log any message to file
+function logToFile(networkName: string, text: string, prefix: string = "**") {
+	const logFile = path.join(logDir, `${networkName.replace(/[^a-z0-9]/gi, "_")}.log`);
+	const timestamp = new Date().toISOString();
+	const logLine = `[${timestamp}] ${prefix} ${text}\n`;
+
+	fs.appendFile(logFile, logLine, (err) => {
+		if (err) {
+			log.error(`Failed to write log for ${networkName}: ${err}`);
+		}
+	});
+}
 
 export default <IrcEventHandler>function (irc, network) {
 	const client = this;
@@ -18,16 +40,23 @@ export default <IrcEventHandler>function (irc, network) {
 		}),
 		true
 	);
+	logToFile(
+		network.name,
+		"Network created, connecting to " + network.host + ":" + network.port + "...",
+		"!!"
+	);
 
 	irc.on("registered", function () {
 		if (network.irc.network.cap.enabled.length > 0) {
+			const capText = "Enabled capabilities: " + network.irc.network.cap.enabled.join(", ");
 			network.getLobby().pushMessage(
 				client,
 				new Msg({
-					text: "Enabled capabilities: " + network.irc.network.cap.enabled.join(", "),
+					text: capText,
 				}),
 				true
 			);
+			logToFile(network.name, capText, "!!");
 		}
 
 		if (network.irc.network.cap.enabled.includes("monitor-notify")) {
@@ -44,7 +73,6 @@ export default <IrcEventHandler>function (irc, network) {
 		// Always restore away message for this network
 		if (network.awayMessage) {
 			irc.raw("AWAY", network.awayMessage);
-			// Only set generic away message if there are no clients attached
 		} else if (client.awayMessage && _.size(client.attachedClients) === 0) {
 			irc.raw("AWAY", client.awayMessage);
 		}
@@ -80,25 +108,30 @@ export default <IrcEventHandler>function (irc, network) {
 			network.serverOptions.PREFIX.update(irc.network.options.PREFIX);
 		}
 
+		const connText = "Connected to the network.";
 		network.getLobby().pushMessage(
 			client,
 			new Msg({
-				text: "Connected to the network.",
+				text: connText,
 			}),
 			true
 		);
+		logToFile(network.name, connText, "!!");
 
 		sendStatus();
 	});
 
 	irc.on("close", function () {
+		const closeText =
+			"Disconnected from the network, and will not reconnect. Use /connect to reconnect again.";
 		network.getLobby().pushMessage(
 			client,
 			new Msg({
-				text: "Disconnected from the network, and will not reconnect. Use /connect to reconnect again.",
+				text: closeText,
 			}),
 			true
 		);
+		logToFile(network.name, closeText, "!!");
 	});
 
 	let identSocketId;
@@ -125,14 +158,16 @@ export default <IrcEventHandler>function (irc, network) {
 		});
 
 		if (error) {
+			const errorText = `Connection closed unexpectedly: ${String(error)}`;
 			network.getLobby().pushMessage(
 				client,
 				new Msg({
 					type: MessageType.ERROR,
-					text: `Connection closed unexpectedly: ${String(error)}`,
+					text: errorText,
 				}),
 				true
 			);
+			logToFile(network.name, errorText, "XX");
 		}
 
 		if (network.keepNick) {
@@ -161,50 +196,88 @@ export default <IrcEventHandler>function (irc, network) {
 	}
 
 	if (Config.values.debug.raw) {
+		// Create a dedicated Raw IRC channel on first connection
+		let rawChannel = network.channels.find((c) => c.name === "Raw IRC");
+
+		if (!rawChannel) {
+			rawChannel = client.createChannel({
+				type: ChanType.LOBBY,
+				name: "Raw IRC",
+				topic: "Raw IRC protocol messages for debugging",
+			});
+
+			client.emit("join", {
+				network: network.uuid,
+				chan: rawChannel.getFilteredClone(true),
+				shouldOpen: false,
+				index: network.addChannel(rawChannel),
+			});
+
+			rawChannel.loadMessages(client, network);
+		}
+
+		(network as any).rawChannel = rawChannel;
+		log.info(`Raw IRC handler registered for network: ${network.name}`);
+
+		// Redirect raw IRC messages to the dedicated channel AND log to file
 		irc.on("raw", function (message) {
-			network.getLobby().pushMessage(
+			const chan = (network as any).rawChannel || network.getLobby();
+			const rawLine = message.line || "";
+			const direction = message.from_server ? "<<" : ">>";
+
+			// Push to UI channel
+			chan.pushMessage(
 				client,
 				new Msg({
 					self: !message.from_server,
-					type: MessageType.RAW,
-					text: message.line,
+					type: MessageType.MONOSPACE_BLOCK,
+					text: rawLine,
 				}),
 				true
 			);
+
+			// Log to file
+			logToFile(network.name, rawLine, direction);
 		});
 	}
 
 	irc.on("socket error", function (err) {
+		const errorText = "Socket error: " + err;
 		network.getLobby().pushMessage(
 			client,
 			new Msg({
 				type: MessageType.ERROR,
-				text: "Socket error: " + err,
+				text: errorText,
 			}),
 			true
 		);
+		logToFile(network.name, errorText, "XX");
 	});
 
 	irc.on("reconnecting", function (data) {
+		const reconnText = `Disconnected from the network. Reconnecting in ${Math.round(
+			data.wait / 1000
+		)} seconds… (Attempt ${Number(data.attempt)})`;
 		network.getLobby().pushMessage(
 			client,
 			new Msg({
-				text: `Disconnected from the network. Reconnecting in ${Math.round(
-					data.wait / 1000
-				)} seconds… (Attempt ${Number(data.attempt)})`,
+				text: reconnText,
 			}),
 			true
 		);
+		logToFile(network.name, reconnText, "!!");
 	});
 
 	irc.on("ping timeout", function () {
+		const timeoutText = "Ping timeout, disconnecting…";
 		network.getLobby().pushMessage(
 			client,
 			new Msg({
-				text: "Ping timeout, disconnecting…",
+				text: timeoutText,
 			}),
 			true
 		);
+		logToFile(network.name, timeoutText, "XX");
 	});
 
 	irc.on("server options", function (data) {

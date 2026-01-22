@@ -276,6 +276,10 @@ module.exports = {
 		leaveMessage: "",
 	},
 
+	// Prevent automatic query window creation from WHOIS responses
+    // Set to false to suppress PM spam from WHOIS-heavy features like IdleStatus
+    autocreateQuery: false,
+
 	// ### `lockNetwork`
 	//
 	// When set to `true`, users will not be able to modify host, port and TLS

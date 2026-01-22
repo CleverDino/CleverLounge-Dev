@@ -19,6 +19,7 @@ const Helper = {
 	getVersionCacheBust,
 	getVersionNumber,
 	getGitCommit,
+	getHomePath,
 	ip2hex,
 	parseHostmask,
 	compareHostmask,
@@ -110,6 +111,19 @@ function expandHome(shortenedPath: string) {
 	return path.resolve(shortenedPath.replace(/^~($|\/|\\)/, home + "$1"));
 }
 
+// Get CleverLounge home directory
+function getHomePath() {
+	const distConfig = path.resolve(path.join(__dirname, "..", "..", ".thelounge"));
+
+	// Check if running from source (development)
+	if (fs.existsSync(distConfig)) {
+		return distConfig;
+	}
+
+	// Production: use ~/.thelounge
+	return expandHome("~/.thelounge");
+}
+
 function passwordRequiresUpdate(password: string) {
 	return bcrypt.getRounds(password) !== 11;
 }
@@ -168,7 +182,7 @@ function compareHostmask(a: Hostmask, b: Hostmask) {
 
 function compareWithWildcard(a: string, b: string) {
 	// we allow '*' and '?' wildcards in our comparison.
-	// this is mostly aligned with https://modern.ircdocs.horse/#wildcard-expressions
+	// this is mostly aligned with [https://modern.ircdocs.horse/#wildcard-expressions](https://modern.ircdocs.horse/#wildcard-expressions)
 	// but we do not support the escaping. The ABNF does not seem to be clear as to
 	// how to escape the escape char '\', which is valid in a nick,
 	// whereas the wildcards tend not to be (as per RFC1459).

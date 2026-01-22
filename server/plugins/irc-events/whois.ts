@@ -2,6 +2,8 @@ import {IrcEventHandler} from "../../client";
 import Msg from "../../models/msg";
 import {MessageType} from "../../../shared/types/msg";
 import {ChanType} from "../../../shared/types/chan";
+import Config from "../../config";
+import log from "../../log";
 
 export default <IrcEventHandler>function (irc, network) {
 	const client = this;
@@ -22,19 +24,27 @@ export default <IrcEventHandler>function (irc, network) {
 			if (data.error) {
 				chan = network.getLobby();
 			} else {
-				chan = client.createChannel({
-					type: ChanType.QUERY,
-					name: data.nick,
-				});
+				// ========== CHECK CONFIG BEFORE CREATING QUERY WINDOW ==========
+				if (Config.values.autocreateQuery) {
+					// OLD BEHAVIOR: Create query window
+					chan = client.createChannel({
+						type: ChanType.QUERY,
+						name: data.nick,
+					});
 
-				client.emit("join", {
-					network: network.uuid,
-					chan: chan.getFilteredClone(true),
-					shouldOpen: true,
-					index: network.addChannel(chan),
-				});
-				chan.loadMessages(client, network);
-				client.save();
+					client.emit("join", {
+						network: network.uuid,
+						chan: chan.getFilteredClone(true),
+						shouldOpen: true,
+						index: network.addChannel(chan),
+					});
+					chan.loadMessages(client, network);
+					client.save();
+				} else {
+					// NEW BEHAVIOR: Don't create query window, use lobby instead
+					chan = network.getLobby();
+					log.debug(`Suppressed query window creation for WHOIS: ${data.nick}`);
+				}
 			}
 		}
 
@@ -55,7 +65,7 @@ export default <IrcEventHandler>function (irc, network) {
 				whois: data,
 			});
 
-			// ========== NEW: UPDATE IDLE DATA IN USER OBJECTS ==========
+			// ========== UPDATE IDLE DATA IN USER OBJECTS ==========
 			// Store idle data on user objects across all channels
 			if (data.idle !== undefined && data.logon !== undefined) {
 				updateUserIdleData(data.nick, data.idle, data.logon);
@@ -65,7 +75,7 @@ export default <IrcEventHandler>function (irc, network) {
 		chan.pushMessage(client, msg);
 	}
 
-	// ========== NEW: IDLE DATA UPDATE FUNCTION ==========
+	// ========== IDLE DATA UPDATE FUNCTION ==========
 	function updateUserIdleData(nick: string, idleSeconds: number, signonTime: number) {
 		// Update all instances of this user across all channels
 		network.channels.forEach((chan) => {
@@ -91,7 +101,7 @@ export default <IrcEventHandler>function (irc, network) {
 		});
 	}
 
-	// ========== NEW: RAW IRC EVENT FOR DIRECT IDLE CAPTURE ==========
+	// ========== RAW IRC EVENT FOR DIRECT IDLE CAPTURE ==========
 	// Capture RPL_WHOISIDLE (317) directly for more reliable idle tracking
 	irc.on("raw", function (message: any) {
 		if (message.command === "317") {
