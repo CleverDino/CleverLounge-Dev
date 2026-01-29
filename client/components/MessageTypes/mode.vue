@@ -85,7 +85,7 @@ export default defineComponent({
 				Z: "encrypted connection",
 			};
 
-			// User modes (with target username) - check settings for each
+			// Channel operator modes (with target username) - check settings for each
 			const userModes: Record<string, {name: string; description: string; show: boolean}> = {
 				o: {
 					name: "OP",
@@ -113,6 +113,90 @@ export default defineComponent({
 					show: settings.showOwnerMode,
 				},
 			};
+
+			// IRC User modes (self-applied, not channel-specific)
+			const ircUserModes: Record<string, {name: string; description: string; show: boolean}> =
+				{
+					// Privacy & Visibility
+					i: {
+						name: "INVISIBLE",
+						description: "hidden from global user lists",
+						show: settings.showInvisibleMode,
+					},
+					x: {
+						name: "CLOAKED HOST",
+						description: "hidden hostname for security",
+						show: settings.showCloakMode,
+					},
+					I: {
+						name: "HIDDEN CHANNELS",
+						description: "channels hidden from WHOIS",
+						show: settings.showHideChanMode,
+					},
+
+					// Connection & Security
+					z: {
+						name: "SSL CONNECTION",
+						description: "connected via TLS/SSL",
+						show: settings.showSSLMode,
+					},
+					r: {
+						name: "REGISTERED",
+						description: "authenticated nickname",
+						show: settings.showRegMode,
+					},
+					t: {
+						name: "VIRTUAL HOST",
+						description: "using custom hostname",
+						show: settings.showVhostMode,
+					},
+
+					// Operator Modes
+					O: {
+						name: "IRC OPERATOR",
+						description: "global server operator",
+						show: settings.showOperMode,
+					},
+					H: {
+						name: "HIDDEN OPER",
+						description: "oper status hidden",
+						show: settings.showHideOperMode,
+					},
+					w: {
+						name: "WALLOPS",
+						description: "receives global announcements",
+						show: settings.showWallopsMode,
+					},
+
+					// Message Control
+					R: {
+						name: "REGISTERED ONLY",
+						description: "blocks unregistered users",
+						show: settings.showRegOnlyMode,
+					},
+					D: {
+						name: "PRIVATE DEAF",
+						description: "blocks private messages",
+						show: settings.showPrivDeafMode,
+					},
+					T: {
+						name: "NO CTCP",
+						description: "blocks CTCP requests",
+						show: settings.showNoCTCPMode,
+					},
+					g: {
+						name: "CALLER ID",
+						description: "requires message approval",
+						show: settings.showCallerIDMode,
+					},
+
+					// Bot Mode
+					B: {
+						name: "BOT",
+						description: "marked as bot account",
+						show: settings.showBotMode,
+					},
+				};
 
 			// Anope FLAGS (services modes)
 			const anopeFlags: Record<string, {name: string; description: string; show: boolean}> = {
@@ -189,10 +273,10 @@ export default defineComponent({
 			};
 
 			// ============================================
-			// USER MODE WITH TARGET (e.g., +v username)
+			// USER MODE WITH TARGET (e.g., +v username) OR SELF-APPLIED (e.g., +i)
 			// ============================================
-			if (flags.length === 1 && userModes[flags] && modeArgs) {
-				const modeConfig = userModes[flags];
+			if (flags.length === 1 && (userModes[flags] || ircUserModes[flags])) {
+				const modeConfig = userModes[flags] || ircUserModes[flags];
 
 				// Check if this mode type should be shown
 				if (!modeConfig.show) {
@@ -200,12 +284,15 @@ export default defineComponent({
 					return ` sets mode ${text}`;
 				}
 
+				// For IRC user modes (self-applied), no target username
+				const isSelfMode = ircUserModes[flags] && !modeArgs;
+
 				// ============================================
-				// MAM-SPECIFIC QUEUE HANDLING
+				// MAM-SPECIFIC QUEUE HANDLING (only for +v/-v with target)
 				// ============================================
-				if (isMAM && settings.formatMamQueueText) {
+				if (!isSelfMode && isMAM && settings.formatMamQueueText && flags === "v") {
 					// Check if this is a queue channel
-					if (channelName === "#anonamouse.net" && flags === "v") {
+					if (channelName === "#anonamouse.net") {
 						if (settings.compactQueueMessages) {
 							// Compact: "← INV-Q da3mam" or "→ INV-Q da3mam"
 							const symbol = sign === "+" ? "→" : "←";
@@ -215,7 +302,7 @@ export default defineComponent({
 							const action = sign === "+" ? " joined " : " left ";
 							return `${action}INVITE QUEUE - ${modeArgs}`;
 						}
-					} else if (channelName === "#help" && flags === "v") {
+					} else if (channelName === "#help") {
 						if (settings.compactQueueMessages) {
 							// Compact: "← SUP-Q da3mam" or "→ SUP-Q da3mam"
 							const symbol = sign === "+" ? "→" : "←";
@@ -249,14 +336,18 @@ export default defineComponent({
 				result += action;
 
 				// Add target with appropriate formatting
-				if (settings.compactUserModes) {
-					// Compact: "sets VOICE on TestUser"
-					result += ` ${modeArgs}`;
-				} else {
-					// Full: "sets VOICE (can speak in moderated channel) on for TestUser"
-					const preposition = sign === "+" ? " for " : " from ";
-					result += `${preposition}${modeArgs}`;
+				if (!isSelfMode) {
+					// Targeted mode (e.g., +v username)
+					if (settings.compactUserModes) {
+						// Compact: "sets VOICE on TestUser"
+						result += ` ${modeArgs}`;
+					} else {
+						// Full: "sets VOICE (can speak in moderated channel) on for TestUser"
+						const preposition = sign === "+" ? " for " : " from ";
+						result += `${preposition}${modeArgs}`;
+					}
 				}
+				// else: self-applied mode (e.g., +i) - no target needed
 
 				return result;
 			}
